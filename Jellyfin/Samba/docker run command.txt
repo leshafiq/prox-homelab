@@ -1,1 +1,1 @@
-docker run --restart unless-stopped --name samba -p 139:139 -p 445:445 -v /share:/share -v /mnt/media:/mnt/media -d dperson/samba -u "shafiq;abcd@1234" -s "public;/share;yes;no;yes" -s "media;/mnt/media;yes;no;yes"
+docker run --restart unless-stopped --name samba -p 139:139 -p 445:445 -v /share:/share -v /mnt/media:/mnt/media -d dperson/samba -u "user;pass" -s "public;/share;yes;no;yes" -s "media;/mnt/media;yes;no;yes"
