@@ -3,6 +3,8 @@ Hello, my name is Mohamed Shafiq. Feel free to use my code to setup a homelab
 If you're running any NAS and wanted to bind SMB share folder to a LXC container, you need to install "CIFS-UTILS" in proxmox pve. 
 And then make a directory eg. /mnt/media. run command "mount -t cifs -o user="username" //ipaddress//foldername /directory. then set mount point to container eg. "pct set 104 -mp1 /mnt/media/,mp=/shared"
 
+If you run Nextcloud inside a TrueNAS, and wanted to edit a trusted domain, simply run this command to find the config.php file "find / -name config.php"
+
 
 you can also use samba docker to bind with ZFS Pool (Proxmox)
 - first you need to create your ZFS Storage
