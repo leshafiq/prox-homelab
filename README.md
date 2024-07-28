@@ -23,6 +23,6 @@ If you encounter an error when deploying a container where the error indicates t
 I am using Tapo camera for my Home Assistant. Add this code inside your configuration.yaml file
 
 camera:
-	-	platform: ffmpeg
-    	name: Gate Camera Tapo C200
-        input: rtsp://shafiq:shafiqcamera04@192.168.1.2:554/stream1
+ - platform: ffmpeg
+   name: Gate Camera Tapo C200
+   input: rtsp://user:password@ipaddress:554/stream1
