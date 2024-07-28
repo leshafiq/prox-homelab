@@ -19,3 +19,10 @@ If you encounter an error when running the docker code, edit the code as the cod
 docker run -d --env DNS_SERVER="192.168.1.1"  --env TWINGATE_NETWORK="yournetwork"........
 
 If you encounter an error when deploying a container where the error indicates that a certain port is already in use, simply run this command to look for the services that use the port "lsof -i -P -n | grep LISTEN"
+
+I am using Tapo camera for my Home Assistant. Add this code inside your configuration.yaml file
+
+camera:
+	-	platform: ffmpeg
+    	name: Gate Camera Tapo C200
+        input: rtsp://shafiq:shafiqcamera04@192.168.1.2:554/stream1
