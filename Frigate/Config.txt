@@ -1,14 +1,17 @@
 mqtt:
   host: mqtt.server.com
+birdseye:
+  enabled: True
+  mode: continuous
 cameras:
   rumah:
     ffmpeg:
       inputs:
-        - path: rtsp://shafiq:shafiqcamera04@192.168.1.2:554/stream1
+        - path: rtsp://user:password@ipaddress:554/stream1
           roles:
             - detect
             - rtmp
-        - path: rtsp://shafiq:shafiqcamera04@192.168.1.2:554/stream1
+        - path: rtsp://user:password@ipaddress:554/stream1
           roles:
             - record
     detect:
@@ -26,17 +29,18 @@ cameras:
         default: 2
     record:
       enabled: True
-      events:
-        retain:
-          default: 10   
+      retain:
+        days: 1
+    birdseye:
+      mode: continuous   
   depan:
     ffmpeg:
       inputs:
-        - path: rtsp://shafiq:shafiqcamera04@192.168.1.4:554/stream1
+        - path: rtsp://user:password@ipaddress:554/stream1
           roles:
             - detect
             - rtmp
-        - path: rtsp://shafiq:shafiqcamera04@192.168.1.4:554/stream1
+        - path: rtsp://user:password@ipaddress:554/stream1
           roles:
             - record          
     detect:
@@ -54,9 +58,10 @@ cameras:
         default: 2
     record:
       enabled: True
-      events:
-        retain:
-          default: 10
+      retain:
+        days: 1
+    birdseye:
+      mode: continuous
     motion:
       mask:
         - 0,2160,602,2160,820,2035,820,1976,528,1907,304,1740,155,1662,0,1740
