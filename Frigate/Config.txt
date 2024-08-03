@@ -1,0 +1,66 @@
+mqtt:
+  host: mqtt.server.com
+cameras:
+  rumah:
+    ffmpeg:
+      inputs:
+        - path: rtsp://shafiq:shafiqcamera04@192.168.1.2:554/stream1
+          roles:
+            - detect
+            - rtmp
+        - path: rtsp://shafiq:shafiqcamera04@192.168.1.2:554/stream1
+          roles:
+            - record
+    detect:
+      width: 1280
+      height: 720
+      fps: 30
+    objects:
+      track:
+        - person
+    snapshots:
+      enabled: true
+      timestamp: false
+      bounding_box: true
+      retain:
+        default: 2
+    record:
+      enabled: True
+      events:
+        retain:
+          default: 10   
+  depan:
+    ffmpeg:
+      inputs:
+        - path: rtsp://shafiq:shafiqcamera04@192.168.1.4:554/stream1
+          roles:
+            - detect
+            - rtmp
+        - path: rtsp://shafiq:shafiqcamera04@192.168.1.4:554/stream1
+          roles:
+            - record          
+    detect:
+      width: 1280
+      height: 720
+      fps: 30
+    objects:
+      track:
+        - person
+    snapshots:
+      enabled: true
+      timestamp: false
+      bounding_box: true
+      retain:
+        default: 2
+    record:
+      enabled: True
+      events:
+        retain:
+          default: 10
+    motion:
+      mask:
+        - 0,2160,602,2160,820,2035,820,1976,528,1907,304,1740,155,1662,0,1740
+        - 2088,692,2210,769,2088,836,1941,851,1944,729
+        - 350,437,758,281,1049,174,996,0,517,0,280,0,0,0,0,170,0,471,0,628
+        - 2777,1410,2637,1702,2135,1484,2285,1196
+        - 1826,228,1855,388,1935,547,1807,637,1586,661,1484,535,1312,347
