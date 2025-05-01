@@ -11,7 +11,7 @@ services:
       - /media/devmon/Movies 2:/Media2
     labels:
       - traefik.enable=true
-      - traefik.http.routers.jellyfin.rule=Host(`jlfin.shafiqtechub.com`)
+      - traefik.http.routers.jellyfin.rule=Host(`jlfin.example.com`)
       - traefik.http.routers.jellyfin.entrypoints=websecure
       - traefik.http.routers.jellyfin.tls.certresolver=cloudflare
       - traefik.http.routers.jellyfin.tls=true
