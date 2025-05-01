@@ -1,4 +1,3 @@
-version: '3'
 services:
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
@@ -9,4 +8,18 @@ services:
       - "8096:8096"
     volumes:
       - /mnt/media:/mnt/media
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jellyfin.rule=Host(`jlfin.shafiqtechub.com`)
+      - traefik.http.routers.jellyfin.entrypoints=websecure
+      - traefik.http.routers.jellyfin.tls.certresolver=cloudflare
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+      - traefik.http.routers.jellyfin.service=jellyfin  
+    networks:
+      - traefik_default
+      
     restart: unless-stopped
+
+networks:
+  traefik_default:
+    external: true
