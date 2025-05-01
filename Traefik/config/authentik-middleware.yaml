@@ -2,7 +2,7 @@
    middlewares:
      authentik-middleware:
        forwardAuth:
-         address: https://authentik.shafiqtechub.com/outpost.goauthentik.io/auth/traefik
+         address: https://authentik.example.com/outpost.goauthentik.io/auth/traefik
          trustForwardHeader: true
          authResponseHeaders:
            - X-authentik-username
