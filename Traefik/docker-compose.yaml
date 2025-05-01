@@ -6,11 +6,19 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
     volumes:
       - /run/docker.sock:/run/docker.sock:ro
       - ./config/:/etc/traefik/:ro
       - ./certs/:/var/traefik/certs/:rw
+#    labels:
+#      - traefik.enable=true
+#      - traefik.http.services.traefik.loadbalancer.server.port=8080
+#      - traefik.http.routers.traefik.service=traefik
+#      - traefik.http.routers.traefik.entrypoints=websecure
+#      - traefik.http.routers.traefik.rule=Host(`traefik.example.com`)
+#      - traefik.http.routers.traefik.tls=true
+#      - traefik.http.routers.traefik.middlewares=authentik-middleware@file
+#      - traefik.http.routers.traefik.tls.certresolver=cloudflare  
     environment:
-      - .env #CF_DNS_API_TOKEN=your-cloudflare-api-token
+      - CF_DNS_API_TOKEN=token here
     restart: unless-stopped
