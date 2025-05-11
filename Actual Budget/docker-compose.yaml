@@ -4,6 +4,7 @@ services:
     ports:
       - '5006:5006'
     volumes:
+    # Change './actual-data' below to the path to the folder you want Actual to store its data in on your server.
       - ./actual-data:/data
     labels:
       - traefik.enable=true
