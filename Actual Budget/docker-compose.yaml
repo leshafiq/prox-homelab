@@ -1,0 +1,23 @@
+services:
+  actual_server:
+    image: docker.io/actualbudget/actual-server:latest
+    ports:
+      - '5006:5006'
+    volumes:
+      - ./actual-data:/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.actual.loadbalancer.server.port=5006
+      - traefik.http.routers.actual.service=actual
+      - traefik.http.routers.actual.entrypoints=websecure
+      - traefik.http.routers.actual.rule=Host(`actual.example.com`)
+      - traefik.http.routers.actual.middlewares=authentik-middleware@file
+      - traefik.http.routers.actual.tls=true
+      - traefik.http.routers.actual.tls.certresolver=cloudflare
+    networks:
+      - traefik_default
+    restart: unless-stopped
+
+networks:
+  traefik_default:
+    external: true
