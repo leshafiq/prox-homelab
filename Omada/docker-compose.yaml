@@ -30,7 +30,7 @@ services:
       - TZ=Etc/UTC
     labels:
       - traefik.enable=true
-      - traefik.http.routers.omada.rule=Host(`omada.local-lab.shafiqtechub.com`)
+      - traefik.http.routers.omada.rule=Host(`omada.example.com`)
       - traefik.http.routers.omada.entrypoints=websecure
       - traefik.http.routers.omada.tls.certresolver=cloudflare
       - traefik.http.routers.omada.tls=true
