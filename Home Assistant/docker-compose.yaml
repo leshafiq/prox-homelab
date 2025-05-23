@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.homeassistant.rule=Host(`homeassistant.local-lab.shafiqtechub.com`)
+      - traefik.http.routers.homeassistant.rule=Host(`homeassistant.example.com`)
       - traefik.http.routers.homeassistant.entrypoints=websecure
       - traefik.http.routers.homeassistant.tls.certresolver=cloudflare
       - traefik.http.routers.homeassistant.tls=true
