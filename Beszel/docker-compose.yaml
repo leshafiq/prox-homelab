@@ -7,7 +7,7 @@ services:
       - ./beszel_data:/beszel_data
     labels:
       - traefik.enable=true
-      - traefik.http.routers.beszel.rule=Host(`beszel.local-lab.shafiqtechub.com`)
+      - traefik.http.routers.beszel.rule=Host(`beszel.example.com`)
       - traefik.http.routers.beszel.entrypoints=websecure
       - traefik.http.routers.beszel.tls.certresolver=cloudflare
       - traefik.http.routers.beszel.tls=true
