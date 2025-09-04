@@ -1,0 +1,26 @@
+services:
+  wallos:
+    container_name: wallos
+    image: bellamy/wallos:latest
+    environment:
+      TZ: 'Asia/Kuala_Lumpur'
+    # Volumes store your data between container upgrades
+    volumes:
+      - './db:/var/www/html/db'
+      - './logos:/var/www/html/images/uploads/logos'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.wallos.rule=Host(`wallos.xxx.com`)
+      - traefik.http.routers.wallos.entrypoints=websecure
+      - traefik.http.routers.wallos.tls.certresolver=cloudflare
+      - traefik.http.routers.wallos.tls=true
+      - traefik.http.services.wallos.loadbalancer.server.port=80
+      - traefik.http.routers.wallos.service=wallos  
+    networks:
+      - traefik_default
+      
+    restart: unless-stopped
+
+networks:
+  traefik_default:
+    external: true
