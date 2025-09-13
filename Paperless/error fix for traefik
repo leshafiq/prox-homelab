@@ -1,0 +1,7 @@
+If you have proxy timeout "Gateaway timeout"
+Run this code
+
+docker run --rm -it --network traefik_default alpine sh
+# inside the container:
+apk add --no-cache curl
+curl -vk http://paperless-webserver-1:8000
