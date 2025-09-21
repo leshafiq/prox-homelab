@@ -1,0 +1,91 @@
+services:
+  traefik:
+    image: traefik:v3.4
+
+    networks:
+      - traefik_proxy
+
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    
+    secrets:
+      - cloudflare_api_token
+
+    environment:
+      - CF_DNS_API_TOKEN_FILE=/run/secrets/cloudflare_api_token
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /mnt/192.168.xx.xx/Share/swarm-data/swarm-data/traefik-certs:/certs:ro
+      - /mnt/192.168.xx.xx/Share/swarm-data/swarm-data/traefik-dynamic:/dynamic:ro
+      - /mnt/192.168.xx.xx/Share/swarm-data/swarm-data/traefik-letsencrypt:/letsencrypt
+
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.le.acme.dnschallenge=true"
+      - "--certificatesresolvers.le.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.le.acme.email=xxx@xxx.com"
+      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+
+      - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
+      - "--providers.swarm.watch=true"
+      - "--providers.swarm.exposedbydefault=false"
+      - "--providers.swarm.network=traefik_traefik_proxy"
+      - "--providers.file.filename=/dynamic/tls.yaml"
+
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+
+      - "--log.level=INFO"
+      - "--accesslog=true"
+      - "--metrics.prometheus=true"
+
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+      labels:
+        - "traefik.enable=true"
+
+        # Dashboard router
+        - "traefik.http.routers.dashboard.rule=Host(`traefik.xxx.com`)"
+        - "traefik.http.routers.dashboard.entrypoints=websecure"
+        - "traefik.http.routers.dashboard.service=api@internal"
+        - "traefik.http.routers.dashboard.tls=true"
+        - "traefik.http.routers.dashboard.tls.certresolver=le"
+
+        # Basic‑auth middleware
+        - "traefik.http.middlewares.dashboard-auth.basicauth.users=admin:saapsojdp148129407"
+        - "traefik.http.routers.dashboard.middlewares=dashboard-auth@swarm"
+
+        # Internal service port
+        - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+
+# Define the overlay network for Swarm
+networks:
+  traefik_proxy:
+    driver: overlay
+    attachable: true
+
+secrets:
+  cloudflare_api_token:
+    external: true
