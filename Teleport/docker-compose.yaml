@@ -15,7 +15,7 @@ services:
       - "traefik.http.routers.teleport-https.entrypoints=websecure"
       - "traefik.http.routers.teleport-https.rule=HostRegexp(`^(?i)(?:[[:alnum:]]+(?:-+[[:alnum:]]+)*\\.)?teleport.local-lab.xxx.com(?::\\d+)?$`)"
       - "traefik.http.routers.teleport-https.tls=true"
-      - "traefik.http.routers.teleport-https.tls.certresolver=your-certresolver"
+      - "traefik.http.routers.teleport-https.tls.certresolver=cloudflare"
       - "traefik.http.routers.teleport-https.tls.domains[0].main=teleport.local-lab.xxx.com"
       - "traefik.http.routers.teleport-https.tls.domains[0].sans=*.teleport.local-lab.xxx.com"
 
