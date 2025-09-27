@@ -1,0 +1,26 @@
+# =====[ LET'S ENCRYPT ISSUERS - CHOOSE ONE SOLVER ]==========================================
+# ----[ DNS-01 via Cloudflare (RECOMMENDED for private/LAN IPs) ]------------------------------
+# Create Cloudflare token secret in the namespace where the Rancher ingress lives (cattle-system).
+kubectl create namespace cattle-system --dry-run=client -o yaml | kubectl apply -f -    # ensure ns exists
+kubectl -n cattle-system create secret generic cloudflare-api-token-secret \
+  --from-literal=api-token="${CF_API_TOKEN}"
+
+# Create a ClusterIssuer using DNS-01 (works even if your service is only privately reachable).
+cat <<'EOF' | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-dns
+spec:
+  acme:
+    email: REPLACE_WITH_YOUR_EMAIL@example.com         # <-- EDIT or env-substitute manually
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-dns-account-key
+    solvers:
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: cloudflare-api-token-secret
+            key: api-token
+EOF

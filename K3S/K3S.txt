@@ -1,50 +1,12 @@
-K3S
+setup:
 
-1. Install k3s on your first server
+1. 1st node (master) - curl -sfL https://get.k3s.io |   K3S_TOKEN=${TOKEN} sh -s - server   --cluster-init   --tls-san 192.168.100.110   --tls-san 192.168.100.111   --tls-san 192.168.100.112   --write-kubeconfig-mode=644
 
-curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
-    --cluster-init \
-    --disable=traefik
-    --tls-san=<FIXED_IP>
+2. sudo cat /var/lib/rancher/k3s/server/token
 
-2. Install kube vip
-
-- sudo su
-- mkdir -p /var/lib/rancher/k3s/server/manifests/
-- curl https://kube-vip.io/manifests/rbac.yaml > /var/lib/rancher/k3s/server/manifests/kube-vip-rbac.yaml
-- kubectl apply -f https://kube-vip.io/manifests/rbac.yaml
-- export VIP=192.168.x.x
-- export INTERFACE=ens1x
-- KVVERSION=$(curl -sL https://api.github.com/repos/kube-vip/kube-vip/releases | jq -r ".[0].name")
-- alias kube-vip="ctr image pull ghcr.io/kube-vip/kube-vip:$KVVERSION; ctr run --rm --net-host ghcr.io/kube-vip/kube-vip:$KVVERSION vip /kube-vip"
-- kube-vip manifest daemonset \
-    --interface $INTERFACE \
-    --address $VIP \
-    --inCluster \
-    --taint \
-    --controlplane \
-    --services \
-    --arp \
-    --leaderElection
-- copy ARP manifest to /var/lib/rancher/k3s/server/manifests/kube-vip-manifest.yaml
-- kubectl apply -f /var/lib/rancher/k3s/server/manifests/kube-vip-manifest.yaml
-
-3. Join other server to server 1
-
-curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
-    --server https://<ip or hostname of server1>:6443 \
-    --tls-san=<FIXED_IP>
-
-4. Join worker node
-
-curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - agent --server https://<ip or hostname of server>:6443
-
-5. Install kube-vip cloud provided
-
-- kubectl apply -f https://raw.githubusercontent.com/kube-vip/kube-vip-cloud-provider/main/manifest/kube-vip-cloud-controller.yaml
-
-- kubectl create configmap -n kube-system kubevip --from-literal range-global=192.168.100.60-192.168.100.99
-
-UNINSTALL
-/usr/local/bin/k3s-uninstall.sh
-/usr/local/bin/k3s-agent-uninstall.sh
+3. 2nd and 3rd node (server/control plane) - curl -sfL https://get.k3s.io | \
+  K3S_TOKEN=$token sh -s - server \
+  --server https://192.168.100.110:6443 \
+  --tls-san 192.168.100.110 \
+  --tls-san 192.168.100.111 \
+  --tls-san 192.168.100.112

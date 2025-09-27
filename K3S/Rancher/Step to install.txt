@@ -1,0 +1,29 @@
+# =====[ INSTALL RANCHER (INGRESS VIA TRAEFIK + LET'S ENCRYPT) ]==============================
+# IMPORTANT: Make sure Rancher Service is not exposed directly as a LoadBalancer to avoid bypass.
+kubectl -n cattle-system patch svc rancher -p '{"spec":{"type":"ClusterIP"}}' || true   # ignore if not present
+
+Step 01 - (DNS-01): Use cert-manager with Let's Encrypt DNS solver (preferred for private IPs)
+helm upgrade --install rancher rancher-latest/rancher \
+  --namespace cattle-system \
+  --set hostname="${RANCHER_HOSTNAME}" \
+  --set ingress.tls.source=letsEncrypt \
+  --set letsEncrypt.email="${LETSENCRYPT_EMAIL}" \
+  --set letsEncrypt.ingress.class=traefik \
+  --set letsEncrypt.environment=production
+
+#Or this step 
+kubectl -n cattle-system create secret generic cloudflare-api-token-secret \
+  --from-literal=api-token=YOUR_API_TOKEN_HERE
+kubectl apply -f clusterissuer-dns.yaml
+
+# After install, force the ingress to reference the ClusterIssuer you created.
+# (For DNS-01)
+kubectl -n cattle-system annotate ingress rancher cert-manager.io/cluster-issuer=letsencrypt-dns --overwrite
+kubectl -n cattle-system delete certificate tls-rancher-ingress
+kubectl -n cattle-system delete secret tls-rancher-ingress
+
+Check status:
+kubectl -n cattle-system describe certificate tls-rancher-ingress
+kubectl -n cattle-system get challenge -o wide
+kubectl -n cattle-system get order -o wide
+

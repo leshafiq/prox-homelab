@@ -1,0 +1,6 @@
+Install Metall LLB
+1.  kubectl create namespace metallb-system
+2.  helm repo add metallb https://metallb.github.io/metallb
+3.  helm repo update
+4.  helm install metallb metallb/metallb --namespace metallb-system
+5.  kubectl apply -f lb-deployment.yaml
