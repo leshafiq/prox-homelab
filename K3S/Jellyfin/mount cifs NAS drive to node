@@ -1,0 +1,7 @@
+1.  sudo apt update && sudo apt install cifs-utils -y
+2.  sudo mkdir /etc/smbcredentials
+3.  sudo nano /etc/smbcredentials/nas.cred
+    username=user
+    password=password
+4.  sudo mkdir /mnt/Media
+5.  sudo mount -t cifs //192.168.xxx.xxx/Share/Media /mnt/Media    -o credentials=/etc/smbcredentials/nas.cred,vers=3.0

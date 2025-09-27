@@ -1,0 +1,112 @@
+# -------------------------------
+# 1. Jellyfin Deployment
+# -------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jellyfin
+  name: jellyfin
+  namespace: jellyfin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      volumes:
+      - name: jellyfin-config
+        hostPath:
+          path: /srv/jellyfin/config
+          type: DirectoryOrCreate
+      - name: jellyfin-data
+        hostPath:
+          path: /mnt/Media      # <-- your mounted NAS path on the host
+          type: Directory
+      containers:
+      - name: jellyfin
+        image: ghcr.io/linuxserver/jellyfin
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8096
+          name: http-tcp
+          protocol: TCP
+        - containerPort: 8920
+          name: https-tcp
+          protocol: TCP
+        - containerPort: 1900
+          name: dlna-udp
+          protocol: UDP
+        - containerPort: 7359
+          name: discovery-udp
+          protocol: UDP
+        env:
+        - name: JELLYFIN_PublishedServerUrl
+          value: 192.xxx.xxx.xxx
+        - name: PGID
+          value: "3000"
+        - name: PUID
+          value: "3000"
+        - name: TZ
+          value: Asia/Kuala_Lumpur
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /config
+          name: jellyfin-config
+        - mountPath: /data
+          name: jellyfin-data
+
+---
+# -------------------------------
+# 2. Jellyfin Service
+# -------------------------------
+kind: Service
+apiVersion: v1
+metadata:
+  name: jellyfin-tcp
+  namespace: jellyfin
+spec:
+  selector:
+    app: jellyfin
+  ports:
+  - port: 8096
+    targetPort: 8096
+    name: http-tcp
+  - port: 8920
+    targetPort: 8920
+    name: https-tcp
+  type: ClusterIP
+
+---
+# -------------------------------
+# 3. Jellyfin Ingress
+# -------------------------------
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jellyfin
+  namespace: jellyfin
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/cluster-issuer: "letsencrypt-dns"
+spec:
+  rules:
+  - host: jellyfin.xxx.xxx.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jellyfin-tcp
+            port:
+              number: 8096
+  tls:
+  - hosts:
+    - jellyfin.xxx.xxx.com
+    secretName: jellyfin-tls
