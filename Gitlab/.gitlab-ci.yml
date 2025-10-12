@@ -1,0 +1,33 @@
+stages:
+  - build
+  - push
+  - deploy
+
+# --------------------------------------
+# Deploy to remote Docker host via SSH
+# --------------------------------------
+deploy:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+  script:
+    - echo "Deploying container to remote server..."
+    - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "mkdir -p $DEPLOY_PATH"
+    - scp -r deployment/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+    - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
+        cd $DEPLOY_PATH &&
+        docker compose down &&
+        docker compose up -d
+      "
+  variables:
+    DEPLOY_USER: "shafiq"
+    DEPLOY_HOST: "192.168.100.75"
+    DEPLOY_PATH: "/home/shafiq/Git/app-name"
+
+  only:
+    - main
+    - master
