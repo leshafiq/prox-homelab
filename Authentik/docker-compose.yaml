@@ -1,3 +1,4 @@
+#http://<your-server-address>/if/flow/initial-setup/
 services:
   postgresql:
     # env_file:
