@@ -17,7 +17,7 @@ services:
       - traefik.http.routers.traefik.entrypoints=websecure
       - traefik.http.routers.traefik.tls=true
       - traefik.http.routers.traefik.tls.certresolver=cloudflare
-      - traefik.http.routers.traefik.middlewares=crowdsec-middleware@file
+      - traefik.http.routers.traefik.middlewares=crowdsec-bouncer@file
 #     - traefik.http.routers.traefik.middlewares=authentik-middleware@file
 
     environment:
