@@ -2,14 +2,11 @@ global:
   checkNewVersion: false
   sendAnonymousUsage: false
 
-# --> (Optional) Change log level and format here ...
-# log:
-#   level: ERROR
-# <--
-
-# --> (Optional) Enable accesslog here ...
-# accesslog: {}
-# <--
+log:
+  level: "INFO"
+  filePath: "/var/log/traefik/traefik.log"
+accessLog:
+  filePath: "/var/log/traefik/access.log"
 
 # --> (Optional) Enable API and Dashboard here, don't do in production
 api:
@@ -21,19 +18,24 @@ entryPoints:
   web:
     address: :80
     # --> (Optional) Redirect all HTTP to HTTPS
-    # http:
-    #   redirections:
-    #     entryPoint:
-    #       to: websecure
-    #       scheme: https
+    http:
+      middlewares:
+        - crowdsec-bouncer@file
+      redirections:
+         entryPoint:
+           to: websecure
+           scheme: https
     # <--
   websecure:
     address: :443
+    http:
+      middlewares:
+        - crowdsec-bouncer@file
 
 certificatesResolvers:
   cloudflare:
     acme:
-      email: example@gmail.com  # <-- Change this to your email
+      email: leshafiq96@gmail.com
       storage: /var/traefik/certs/cloudflare-acme.json
       caServer: "https://acme-v02.api.letsencrypt.org/directory"
       dnsChallenge:
@@ -43,8 +45,8 @@ certificatesResolvers:
           - "8.8.8.8:53"
 
 # --> (Optional) Disable TLS Cert verification check
-# serversTransport:
-#   insecureSkipVerify: true
+serversTransport:
+  insecureSkipVerify: true
 # <--
 
 providers:
