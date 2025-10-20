@@ -26,6 +26,33 @@ services:
     depends_on:
       - crowdsec
     restart: unless-stopped
+
+
+  crowdsec-dashboard:
+    # Default login:
+    #   crowdsec@crowdsec.net
+    #   !!Cr0wdS3c_M3t4b4s3??
+    build: ./dashboard
+    container_name: crowdsec-dashboard
+    restart: unless-stopped
+    environment:
+        MB_DB_FILE: /data/metabase.db
+        MGID: "${GID-1000}" # Needs access to crowdsec.db file
+    depends_on:
+      - crowdsec
+    volumes:
+        #- metabase-db:/data/
+      - crowdsec-db:/metabase-data/
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.crowdsec-dashboard.entrypoints=websecure
+      - traefik.http.routers.crowdsec-dashboard.tls.certresolver=cloudflare
+      - traefik.http.routers.crowdsec-dashboard.tls=true
+      - traefik.http.services.crowdsec-dashboard.loadbalancer.server.port=3000
+      - traefik.http.routers.crowdsec-dashboard.service=crowdsec-dashboard
+    networks:
+      - traefik_default
+
 networks:
   traefik_default:
     external: true
