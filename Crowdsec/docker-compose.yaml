@@ -61,6 +61,9 @@ volumes:
   traefik_traefik-logs: # this will be the name of the volume from trarfic logs
     external: true # remove if traefik is running on same stack
 
+# To add bouncer to traefik
+# docker exec crowdsec cscli bouncers add bouncer-traefik
+
 # To test if crowdsec is working, you can run the following command to see the decisions made by crowdsec
 # docker exec crowdsec cscli metrics
 # docker exec crowdsec cscli decisions list
