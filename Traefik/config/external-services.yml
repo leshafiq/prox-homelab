@@ -1,0 +1,15 @@
+http:
+  routers:
+    truenas:
+      entryPoints:
+        - web
+        - websecure
+      rule: "Host(`xxx.xxx.com`)"
+      service: truenas
+      tls:
+        certResolver: cloudflare
+  services:
+    truenas:
+      loadBalancer:
+        servers:
+        - url: "https://192.168.xxx.xxx:443"
