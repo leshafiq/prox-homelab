@@ -1,0 +1,40 @@
+Increase Diskspace in Proxmox
+Shutdown VM
+Go to VM
+Go to Hardware
+Click Hard Disk you want to resize
+Click "Disk Action" then  "Resize"
+Enter the amount to increase
+Start VM
+
+Drop to Sudo
+sudo su
+
+Check for Free Space
+cfdisk
+
+Resize with fsdisk
+Select your /dev/sda3 partition
+
+Select RESIZE and hit ENTER
+New size will be entire free space by default, hit ENTER
+Click WRITE, then type 'yes', press ENTER
+Press 'q'
+
+Extend the partition
+pvresize /dev/sda3
+
+Check Volume Group for Free Space
+vgdisplay
+
+Extend the volume
+lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+
+Confirm Changes
+lvdisplay
+
+Resize Root File System
+resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+
+Confirm Changes
+df-h
