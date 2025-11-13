@@ -1,0 +1,4 @@
+1. curl -Lso bitwarden.sh "https://func.bitwarden.com/api/dl/?app=self-host&platform=linux" && chmod 700 bitwarden.sh
+2. ./bitwarden.sh install
+3. Get ID from https://bitwarden.com/host/
+4. Replace compose file

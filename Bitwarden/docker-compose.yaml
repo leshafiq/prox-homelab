@@ -1,0 +1,199 @@
+#
+# Useful references:
+# https://docs.docker.com/reference/compose-file/
+# https://docs.docker.com/reference/cli/docker/compose/#use--f-to-specify-the-name-and-path-of-one-or-more-compose-files
+# https://docs.docker.com/compose/how-tos/environment-variables/envvars/
+#
+#########################################################################
+# WARNING: This file is generated. Do not make changes to this file.    #
+# They will be overwritten on update. If you want to make additions to  #
+# this file, you can create a `docker-compose.override.yml` file in the #
+# same directory and it will be merged into this file at runtime. You   #
+# can also manage various settings used in this file from the           #
+# ./bwdata/config.yml file for your installation.                       #
+#########################################################################
+
+services:
+  mssql:
+    image: ghcr.io/bitwarden/mssql:2025.10.1
+    container_name: bitwarden-mssql
+    restart: always
+    stop_grace_period: 60s
+    volumes:
+      - ../mssql/data:/var/opt/mssql/data
+      - ../logs/mssql:/var/opt/mssql/log
+      - ../mssql/backups:/etc/bitwarden/mssql/backups
+    env_file:
+      - mssql.env
+      - ../env/uid.env
+      - ../env/mssql.override.env
+
+  web:
+    image: ghcr.io/bitwarden/web:2025.10.1
+    container_name: bitwarden-web
+    restart: always
+    volumes:
+      - ../web:/etc/bitwarden/web
+    env_file:
+      - global.env
+      - ../env/uid.env
+
+  attachments:
+    image: ghcr.io/bitwarden/attachments:2025.10.1
+    container_name: bitwarden-attachments
+    restart: always
+    volumes:
+      - ../core/attachments:/etc/bitwarden/core/attachments
+    env_file:
+      - global.env
+      - ../env/uid.env
+
+  api:
+    image: ghcr.io/bitwarden/api:2025.10.1
+    container_name: bitwarden-api
+    restart: always
+    volumes:
+      - ../core:/etc/bitwarden/core
+      - ../ca-certificates:/etc/bitwarden/ca-certificates
+      - ../logs/api:/etc/bitwarden/logs
+    env_file:
+      - global.env
+      - ../env/uid.env
+      - ../env/global.override.env
+    networks:
+      - default
+      - public
+
+  identity:
+    image: ghcr.io/bitwarden/identity:2025.10.1
+    container_name: bitwarden-identity
+    restart: always
+    volumes:
+      - ../identity:/etc/bitwarden/identity
+      - ../core:/etc/bitwarden/core
+      - ../ca-certificates:/etc/bitwarden/ca-certificates
+      - ../logs/identity:/etc/bitwarden/logs
+    env_file:
+      - global.env
+      - ../env/uid.env
+      - ../env/global.override.env
+    networks:
+      - default
+      - public
+
+  sso:
+    image: ghcr.io/bitwarden/sso:2025.10.1
+    container_name: bitwarden-sso
+    restart: always
+    volumes:
+      - ../identity:/etc/bitwarden/identity
+      - ../core:/etc/bitwarden/core
+      - ../ca-certificates:/etc/bitwarden/ca-certificates
+      - ../logs/sso:/etc/bitwarden/logs
+    env_file:
+      - global.env
+      - ../env/uid.env
+      - ../env/global.override.env
+    networks:
+      - default
+      - public
+
+  admin:
+    image: ghcr.io/bitwarden/admin:2025.10.1
+    container_name: bitwarden-admin
+    restart: always
+    depends_on:
+      - mssql
+    volumes:
+      - ../core:/etc/bitwarden/core
+      - ../ca-certificates:/etc/bitwarden/ca-certificates
+      - ../logs/admin:/etc/bitwarden/logs
+    env_file:
+      - global.env
+      - ../env/uid.env
+      - ../env/global.override.env
+    networks:
+      - default
+      - public
+
+  icons:
+    image: ghcr.io/bitwarden/icons:2025.10.1
+    container_name: bitwarden-icons
+    restart: always
+    volumes:
+      - ../ca-certificates:/etc/bitwarden/ca-certificates
+      - ../logs/icons:/etc/bitwarden/logs
+    env_file:
+      - global.env
+      - ../env/uid.env
+    networks:
+      - default
+      - public
+
+  notifications:
+    image: ghcr.io/bitwarden/notifications:2025.10.1
+    container_name: bitwarden-notifications
+    restart: always
+    volumes:
+      - ../ca-certificates:/etc/bitwarden/ca-certificates
+      - ../logs/notifications:/etc/bitwarden/logs
+    env_file:
+      - global.env
+      - ../env/uid.env
+      - ../env/global.override.env
+    networks:
+      - default
+      - public
+
+  events:
+    image: ghcr.io/bitwarden/events:2025.10.1
+    container_name: bitwarden-events
+    restart: always
+    volumes:
+      - ../ca-certificates:/etc/bitwarden/ca-certificates
+      - ../logs/events:/etc/bitwarden/logs
+    env_file:
+      - global.env
+      - ../env/uid.env
+      - ../env/global.override.env
+    networks:
+      - default
+      - public
+
+  nginx:
+    image: ghcr.io/bitwarden/nginx:2025.10.1
+    container_name: bitwarden-nginx
+    restart: always
+    depends_on:
+      - web
+      - admin
+      - api
+      - identity
+    volumes:
+      - ../nginx:/etc/bitwarden/nginx
+      - ../letsencrypt:/etc/letsencrypt
+      - ../ssl:/etc/ssl
+      - ../logs/nginx:/var/log/nginx
+    env_file:
+      - ../env/uid.env
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.bitwarden.loadbalancer.server.port=8080
+      - traefik.http.routers.bitwarden.service=bitwarden
+      - traefik.http.routers.bitwarden.entrypoints=websecure
+      - traefik.http.routers.bitwarden.rule=Host(`bitwarden.xxx.com`)
+      - traefik.http.routers.bitwarden.tls=true
+      - traefik.http.routers.bitwarden.tls.certresolver=cloudflare
+    networks:
+      - default
+      - public
+      - traefik_default
+
+
+networks:
+  default:
+    internal: true
+  public:
+    internal: false
+  traefik_default:
+    external: true
