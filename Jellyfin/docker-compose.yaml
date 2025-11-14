@@ -1,14 +1,11 @@
 services:
   jellyfin:
-    image: lscr.io/linuxserver/jellyfin:latest
+    image: lscr.io/linuxserver/jellyfin:10.11.2
     container_name: jellyfin
     environment:
       - TZ=Etc/UTC
-    ports:
-      - "8096:8096"
     volumes:
       - /media/devmon/Movies:/Media
-      - /media/devmon/Movies 2:/Media2
     labels:
       - traefik.enable=true
       - traefik.http.routers.jellyfin.rule=Host(`jlfin.example.com`)
@@ -25,3 +22,4 @@ services:
 networks:
   traefik_default:
     external: true
+
