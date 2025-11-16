@@ -73,7 +73,7 @@ services:
         target: /config
     labels:
       - traefik.enable=true
-      - traefik.http.routers.unifi.rule=Host(`unifi.shafiqtechub.com`)
+      - traefik.http.routers.unifi.rule=Host(`unifi.xxx.com`)
       - traefik.http.routers.unifi.entrypoints=websecure
       - traefik.http.routers.unifi.tls.certresolver=cloudflare
       - traefik.http.routers.unifi.tls=true
