@@ -1,0 +1,37 @@
+mqtt:
+  enabled: False
+birdseye:
+  enabled: True
+  mode: continuous
+cameras:
+  meowroom:
+    ffmpeg:
+      inputs:
+        - path: rtsp://user:password@192.168.110.193:554/stream1
+          roles:
+            - detect
+            - record
+    onvif:
+      host: 192.168.110.193
+      port: 2020
+      user: user
+      password: password
+    detect:
+      width: 1280
+      height: 720
+      fps: 30
+    objects:
+      track:
+        - person
+    snapshots:
+      enabled: true
+      timestamp: false
+      bounding_box: true
+      retain:
+        default: 2
+    record:
+      enabled: True
+      retain:
+        days: 1
+    birdseye:
+      mode: continuous
