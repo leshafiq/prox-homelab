@@ -15,18 +15,19 @@ deploy:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
   script:
-    - echo "Deploying container to remote server..."
+    - echo "Deploying container to remote server...."
     - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "mkdir -p $DEPLOY_PATH"
     - scp -r deployment/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
     - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
         cd $DEPLOY_PATH &&
+        echo "FRIGATE_RTSP_PASSWORD=${TAPO_RTSP_PASS}" > .env &&
         docker compose down &&
         docker compose up -d
       "
   variables:
     DEPLOY_USER: "shafiq"
-    DEPLOY_HOST: "192.168.100.75"
-    DEPLOY_PATH: "/home/shafiq/Git/app-name"
+    DEPLOY_HOST: "192.168.242.2"
+    DEPLOY_PATH: "/home/shafiq/Git/frigate"
 
   only:
     - main
