@@ -3,6 +3,8 @@ services:
     container_name: frigate
     stop_grace_period: 30s
     image: ghcr.io/blakeblackshear/frigate:0.16.3
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
     volumes:
       - ./config:/config
       - ./storage:/media/frigate
@@ -23,4 +25,5 @@ services:
 
 networks:
   traefik_default:
+
     external: true
