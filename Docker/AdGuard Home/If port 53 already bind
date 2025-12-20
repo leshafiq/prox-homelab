@@ -1,0 +1,13 @@
+1. check port - sudo lsof -i :53
+2. sudo mkdir -p /etc/systemd/resolved.conf.d
+3. sudo nano /etc/systemd/resolved.conf.d/adguardhome.conf
+4. paste
+
+[Resolve]
+DNS=127.0.0.1
+DNSStubListener=no
+
+5. sudo mv /etc/resolv.conf /etc/resolv.conf.backup
+6. sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+7. sudo systemctl reload-or-restart systemd-resolved
+8. check port again - sudo lsof -i :53

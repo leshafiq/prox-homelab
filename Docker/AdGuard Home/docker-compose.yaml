@@ -1,0 +1,29 @@
+services:
+  adguard:
+    image: adguard/adguardhome:v0.107.71
+    container_name: adguard
+    hostname: adguard
+    ports:
+      - 3000:3000/tcp
+      - 53:53/tcp # dns
+      - 53:53/udp # dns
+      - 853:853/tcp # dns over tls
+      - 5443:5443/tcp # dnscrypt
+      - 5443:5443/udp # dnscrypt
+    volumes:
+      - ./config/adguard_work:/opt/adguardhome/work
+      - ./config/adguard_conf:/opt/adguardhome/conf
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.adguard.loadbalancer.server.port=80
+      - traefik.http.routers.adguard.service=adguard
+      - traefik.http.routers.adguard.entrypoints=websecure
+      - traefik.http.routers.adguard.tls=true
+      - traefik.http.routers.adguard.tls.certresolver=cloudflare
+    networks:
+      - traefik_default
+    restart: unless-stopped
+
+networks:
+  traefik_default:
+    external: true
