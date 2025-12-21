@@ -1,0 +1,13 @@
+Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: open sysctl net.ipv4.ip_unprivileged_port_start file: reopen fd 8: permission denied: unknown
+
+How we do fix this?
+For now, the only way I could find is to disable AppArmor entirely on a per LXC basis. Not exactly the ideal long term solution but for now, the only one available.
+
+lxc.apparmor.profile: unconfined
+lxc.mount.entry: /dev/null sys/module/apparmor/parameters/enabled none bind 0 0
+OR
+
+As per this comment you can trick Docker into thinking AppArmor is disabled. Also yuck.
+
+% mount --bind /dev/null /sys/module/apparmor/parameters/enabled
+% systemctl restart docker
