@@ -3,8 +3,13 @@ Error response from daemon: failed to create task for container: failed to creat
 How we do fix this?
 For now, the only way I could find is to disable AppArmor entirely on a per LXC basis. Not exactly the ideal long term solution but for now, the only one available.
 
+1. cd /etc/pve/lxc
+2. nano 101.conf
+3. add these
+
 lxc.apparmor.profile: unconfined
 lxc.mount.entry: /dev/null sys/module/apparmor/parameters/enabled none bind 0 0
+
 OR
 
 As per this comment you can trick Docker into thinking AppArmor is disabled. Also yuck.
