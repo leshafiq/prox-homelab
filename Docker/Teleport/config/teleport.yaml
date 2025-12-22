@@ -1,5 +1,5 @@
 teleport:
-  nodename: sukuna
+  nodename: STH-01
   data_dir: /var/lib/teleport
   log:
     output: stderr
@@ -11,7 +11,7 @@ auth_service:
   enabled: true
   listen_addr: 0.0.0.0:3025
   proxy_listener_mode: multiplex
-  cluster_name: teleport.local-lab.xxx.com
+  cluster_name: teleport.home.xxxxxxx.com
   # -- (Optional) Passwordless Authentication
   # authentication:
   #   type: local
@@ -27,7 +27,7 @@ proxy_service:
   enabled: true
   web_listen_addr: 0.0.0.0:3080
   # -- (Optional) when using reverse proxy
-  public_addr: ['teleport.local-lab.xxx.com:443']
+  public_addr: ['teleport.home.xxxxxxx.com:443']
   https_keypairs: []
   acme: {}
   # --(Optional) ACME
@@ -42,11 +42,130 @@ proxy_service:
 app_service:
   enabled: true
   apps:
-    - name: beszel
-      description: "Beszel Dashboard"
-      uri: "http://beszel:8090"   # Internal Beszel container
-      public_addr: "beszel.teleport.local-lab.xxx.com"
+    - name: traefik
+      description: "Traefik Dashboard"
+      uri: "http://traefik:8080"   # Internal Traefik container
+      public_addr: "traefik.teleport.home.xxxxxxx.com"
       rewrite:
         redirect:
           - "localhost"
-          - "beszel"
+          - "traefik"
+
+    - name: portainer
+      description: "Portainer Dashboard"
+      uri: "http://portainer:9000"   # Internal Portainer container
+      public_addr: "portainer.teleport.home.xxxxxxx.com"
+      rewrite:
+        redirect:
+          - "localhost"
+          - "portainer"
+
+    - name: sth01
+      description: "STH-01 Dashboard"
+      uri: "http://192.168.254.2:81"   # Internal Portainer container
+      public_addr: "sth-01.teleport.home.xxxxxxx.com"
+      labels:
+        environment: server
+      rewrite:
+        redirect:
+          - "localhost"
+          - "sth01"
+
+    - name: sth02
+      description: "STH-02 Dashboard"
+      uri: "http://192.168.254.3:81"   # Internal Portainer container
+      public_addr: "sth-02.teleport.home.xxxxxxx.com"
+      labels:
+        environment: server
+      rewrite:
+        redirect:
+          - "localhost"
+          - "sth02"
+
+    - name: truenas
+      description: "Truenas Dashboard"
+      uri: "https://192.168.254.4:443"   # Truenas
+      public_addr: "truenas.teleport.home.xxxxxxx.com"
+      insecure_skip_verify: true
+      rewrite:
+        headers:
+          - "Host: truenas.teleport.home.xxxxxxx.com"
+          - "Origin: https://truenas.teleport.home.xxxxxxx.com"
+
+    - name: proxmox
+      description: "Proxmox Dashboard"
+      uri: "https://192.168.254.2:8006"   # Proxmox
+      public_addr: "proxmox.teleport.home.xxxxxxx.com"
+      labels:
+        environment: server
+      insecure_skip_verify: true
+      rewrite:
+        redirect:
+          - "localhost"
+          - "proxmox"
+
+    - name: proxmox2
+      description: "Proxmox 2 Dashboard"
+      uri: "https://192.168.254.3:8006"   # Proxmox
+      public_addr: "proxmox2.teleport.home.xxxxxxx.com"
+      labels:
+        environment: server
+      insecure_skip_verify: true
+      rewrite:
+        redirect:
+          - "localhost"
+          - "proxmox2"
+
+    - name: crowdsec
+      description: "Crowdsec Dashboard"
+      uri: "http://crowdsec-dashboard:3000"   # Internal Crowdsec container
+      public_addr: "crowdsec.teleport.home.xxxxxxx.com"
+      rewrite:
+        redirect:
+          - "localhost"
+          - "crowdsec"
+
+    - name: prometheus
+      description: "Prometheus Dashboard"
+      uri: "http://prometheus:9090"   # Internal Prometheus container
+      public_addr: "prometheus.teleport.home.xxxxxxx.com"
+      labels:
+        environment: monitoring
+      rewrite:
+        redirect:
+          - "localhost"
+          - "prometheus"
+
+    - name: frigate
+      description: "Frigate Dashboard"
+      uri: "https://192.168.254.190:8971"   # Frigate Frigate container
+      public_addr: "frigate.teleport.home.xxxxxxx.com"
+      labels:
+        environment: frigate
+      insecure_skip_verify: true
+      rewrite:
+        redirect:
+          - "localhost"
+          - "frigate"
+    
+    - name: adguard
+      description: "Adguard Home Dashboard"
+      uri: "http://adguard:80"   # Internal Adguard container
+      public_addr: "adguard.teleport.home.xxxxxxx.com"
+      labels:
+        environment: network
+      rewrite:
+        redirect:
+          - "localhost"
+          - "adguard"
+
+    - name: grafana
+      description: "Grafana Dashboard"
+      uri: "http://grafana:3000"   # Internal Grafana container
+      public_addr: "grafana.teleport.home.xxxxxxx.com"
+      labels:
+        environment: monitoring
+      rewrite:
+        headers:
+          - "Host: grafana.teleport.home.xxxxxxx.com"
+          - "Origin: https://grafana.teleport.home.xxxxxxx.com"
