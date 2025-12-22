@@ -1,0 +1,5 @@
+default:
+    user: prometheus@pve
+    password: d&F!8it*b%g8dN*8F6&s33mQq!D4a#&&56q*9RHO@lPc&mQyq9A23^z*^Lem
+    # Optional: set to false to skip SSL/TLS verification
+    verify_ssl: false

@@ -1,0 +1,20 @@
+services:
+  pve-exporter:
+    image: prompve/prometheus-pve-exporter
+    container_name: pve-exporter
+    volumes:
+      - ./config/pve.yml:/etc/prometheus/pve.yml
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.pve-exporter.loadbalancer.server.port=9221
+      - traefik.http.routers.pve-exporter.service=pve-exporter
+      - traefik.http.routers.pve-exporter.entrypoints=websecure
+      - traefik.http.routers.pve-exporter.tls=true
+      - traefik.http.routers.pve-exporter.tls.certresolver=cloudflare
+    networks:
+      - traefik_default
+    restart: unless-stopped
+
+networks:
+  traefik_default:
+    external: true
