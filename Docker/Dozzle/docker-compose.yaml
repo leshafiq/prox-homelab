@@ -1,0 +1,20 @@
+services:
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:v8.14.12
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.dozzle.loadbalancer.server.port=8080
+      - traefik.http.routers.dozzle.service=dozzle
+      - traefik.http.routers.dozzle.entrypoints=websecure
+      - traefik.http.routers.dozzle.tls=true
+      - traefik.http.routers.dozzle.tls.certresolver=cloudflare
+    networks:
+      - traefik_default
+    restart: unless-stopped
+
+networks:
+  traefik_default:
+    external: true
