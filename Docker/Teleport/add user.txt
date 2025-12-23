@@ -1,1 +1,1 @@
-docker compose exec teleport ctl users add shafiq --roles=editor
+docker compose exec teleport tctl users add shafiq --roles=editor
