@@ -4,6 +4,8 @@ services:
     image: amir20/dozzle:v8.14.12
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DOZZLE_REMOTE_AGENT=123.123.123.123:7007
     labels:
       - traefik.enable=true
       - traefik.http.services.dozzle.loadbalancer.server.port=8080
