@@ -7,9 +7,6 @@ If you want to passthrough HDD without PCI controller, use code below:
  - ls /dev/disk/by-id
  - qm set 1xx -scsi1 /dev/disk/by-id/ata-xxxxxxxxxxxxxxxxxx
 
-If you run Nextcloud inside a TrueNAS, and wanted to edit a trusted domain, simply run this command to find the config.php file "find / -name config.php"
-
-
 you can also use samba docker to bind with ZFS Pool (Proxmox)
 - first you need to create your ZFS Storage
 - create a pool such as /zpool/media
@@ -21,12 +18,3 @@ you can also use samba docker to bind with ZFS Pool (Proxmox)
 I am using Twingate as my Tunnel/VPN
 If you encounter an error when running the docker code, edit the code as the code below:
 docker run -d --env DNS_SERVER="192.168.1.1"  --env TWINGATE_NETWORK="yournetwork"........
-
-If you encounter an error when deploying a container where the error indicates that a certain port is already in use, simply run this command to look for the services that use the port "lsof -i -P -n | grep LISTEN"
-
-I am using Tapo camera for my Home Assistant. Add this code inside your configuration.yaml file
-
-camera:
- - platform: ffmpeg
-   name: Gate Camera Tapo C200
-   input: rtsp://user:password@ipaddress:554/stream1
