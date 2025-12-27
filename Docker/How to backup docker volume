@@ -1,0 +1,35 @@
+1. docker volume ls
+
+#Create backup#
+2. docker run --rm \
+--mount source=<volume-name>,target=<target> \
+-v $(pwd):/backup \
+busybox \
+tar -czvf /backup/<backup-filename>.tar.gz <target>
+
+For example:
+docker run --rm \
+--mount source=wordpress_wordpress,target=/mount_point \
+-v $(pwd):/backup \
+busybox \
+tar -czvf /backup/wordpress_wordpress.tar.gz /mount_point
+
+#Copy the backup file to a safe place#
+3. scp /path/to/backupfile user@external-server:/path/to/destination
+
+For example:
+scp user@88.88.88.8:/home/user/wordpress_wordpress.tar.gz .
+
+#Restore backup#
+4. docker run --rm \
+--mount source=<volume-name>,target=<target> \
+-v $(pwd):/backup \
+busybox \
+tar -xzvf /backup/<backup-filename>.tar.gz -C /
+
+For example:
+docker run --rm \
+--mount source=wordpress_wordpress,target=/mount_point \
+-v $(pwd):/backup \
+busybox \
+tar -xzvf /backup/wordpress_wordpress.tar.gz -C /
