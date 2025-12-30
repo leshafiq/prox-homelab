@@ -5,24 +5,24 @@ services:
     volumes:
       - ./config:/etc/teleport
       - ./data:/var/lib/teleport
-    # -- (Optional) Traefik example configuration
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.teleport.loadbalancer.server.port=3080"
       - "traefik.http.services.teleport.loadbalancer.server.scheme=https"
       - "traefik.http.routers.teleport-http.entrypoints=web"
-      - "traefik.http.routers.teleport-http.rule=HostRegexp(`^(?i)(?:[[:alnum:]]+(?:-+[[:alnum:]]+)*\\.)?teleport.local-lab.xxx.com(?::\\d+)?$`)"
+      - "traefik.http.routers.teleport-http.rule=HostRegexp(`^(?i)(?:[[:alnum:]]+(?:-+[[:alnum:]]+)*\\.)?teleport.example.com(?::\\d+)?$`)"
       - "traefik.http.routers.teleport-https.entrypoints=websecure"
-      - "traefik.http.routers.teleport-https.rule=HostRegexp(`^(?i)(?:[[:alnum:]]+(?:-+[[:alnum:]]+)*\\.)?teleport.local-lab.xxx.com(?::\\d+)?$`)"
+      - "traefik.http.routers.teleport-https.rule=HostRegexp(`^(?i)(?:[[:alnum:]]+(?:-+[[:alnum:]]+)*\\.)?teleport.example.com(?::\\d+)?$`)"
       - "traefik.http.routers.teleport-https.tls=true"
       - "traefik.http.routers.teleport-https.tls.certresolver=cloudflare"
-      - "traefik.http.routers.teleport-https.tls.domains[0].main=teleport.local-lab.xxx.com"
-      - "traefik.http.routers.teleport-https.tls.domains[0].sans=*.teleport.local-lab.xxx.com"
-
+      - "traefik.http.routers.teleport-https.tls.domains[0].main=example.com"
+      - "traefik.http.routers.teleport-https.tls.domains[0].sans=*.example.com"
+      - "traefik.http.routers.teleport-https.tls.domains[1].main=teleport.example.com"
+      - "traefik.http.routers.teleport-https.tls.domains[1].sans=*.teleport.example.com"
     networks:
-      - traefik_default
-      
+      - traefik_default      
     restart: unless-stopped
+    
 networks:
   traefik_default:
     external: true
