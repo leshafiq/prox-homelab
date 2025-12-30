@@ -11,7 +11,7 @@ auth_service:
   enabled: true
   listen_addr: 0.0.0.0:3025
   proxy_listener_mode: multiplex
-  cluster_name: teleport.home.xxxxxxx.com
+  cluster_name: teleport.xxxxxxx.com
   # -- (Optional) Passwordless Authentication
   # authentication:
   #   type: local
@@ -27,7 +27,7 @@ proxy_service:
   enabled: true
   web_listen_addr: 0.0.0.0:3080
   # -- (Optional) when using reverse proxy
-  public_addr: ['teleport.home.xxxxxxx.com:443']
+  public_addr: ['teleport.xxxxxxx.com:443']
   https_keypairs: []
   acme: {}
   # --(Optional) ACME
@@ -45,7 +45,7 @@ app_service:
     - name: traefik
       description: "Traefik Dashboard"
       uri: "http://traefik:8080"   # Internal Traefik container
-      public_addr: "traefik.teleport.home.xxxxxxx.com"
+      public_addr: "traefik.teleport.xxxxxxx.com"
       rewrite:
         redirect:
           - "localhost"
@@ -54,7 +54,7 @@ app_service:
     - name: portainer
       description: "Portainer Dashboard"
       uri: "http://portainer:9000"   # Internal Portainer container
-      public_addr: "portainer.teleport.home.xxxxxxx.com"
+      public_addr: "portainer.teleport.xxxxxxx.com"
       rewrite:
         redirect:
           - "localhost"
@@ -63,7 +63,7 @@ app_service:
     - name: sth01
       description: "STH-01 Dashboard"
       uri: "http://192.168.254.2:81"   # Internal Portainer container
-      public_addr: "sth-01.teleport.home.xxxxxxx.com"
+      public_addr: "sth-01.teleport.xxxxxxx.com"
       labels:
         environment: server
       rewrite:
@@ -74,7 +74,7 @@ app_service:
     - name: sth02
       description: "STH-02 Dashboard"
       uri: "http://192.168.254.3:81"   # Internal Portainer container
-      public_addr: "sth-02.teleport.home.xxxxxxx.com"
+      public_addr: "sth-02.teleport.xxxxxxx.com"
       labels:
         environment: server
       rewrite:
@@ -85,17 +85,17 @@ app_service:
     - name: truenas
       description: "Truenas Dashboard"
       uri: "https://192.168.254.4:443"   # Truenas
-      public_addr: "truenas.teleport.home.xxxxxxx.com"
+      public_addr: "truenas.teleport.xxxxxxx.com"
       insecure_skip_verify: true
       rewrite:
         headers:
           - "Host: truenas.teleport.home.xxxxxxx.com"
-          - "Origin: https://truenas.teleport.home.xxxxxxx.com"
+          - "Origin: https://truenas.teleport.xxxxxxx.com"
 
     - name: proxmox
       description: "Proxmox Dashboard"
       uri: "https://192.168.254.2:8006"   # Proxmox
-      public_addr: "proxmox.teleport.home.xxxxxxx.com"
+      public_addr: "proxmox.teleport.xxxxxxx.com"
       labels:
         environment: server
       insecure_skip_verify: true
@@ -168,4 +168,5 @@ app_service:
       rewrite:
         headers:
           - "Host: grafana.teleport.home.xxxxxxx.com"
+
           - "Origin: https://grafana.teleport.home.xxxxxxx.com"
