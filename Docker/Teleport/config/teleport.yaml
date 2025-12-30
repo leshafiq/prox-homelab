@@ -63,7 +63,7 @@ app_service:
     - name: sth01
       description: "STH-01 Dashboard"
       uri: "http://192.168.254.2:81"   # Internal Portainer container
-      public_addr: "sth-01.teleport.xxxxxxx.com"
+      public_addr: "sth01.teleport.xxxxxxx.com"
       labels:
         environment: server
       rewrite:
@@ -74,7 +74,7 @@ app_service:
     - name: sth02
       description: "STH-02 Dashboard"
       uri: "http://192.168.254.3:81"   # Internal Portainer container
-      public_addr: "sth-02.teleport.xxxxxxx.com"
+      public_addr: "sth02.teleport.xxxxxxx.com"
       labels:
         environment: server
       rewrite:
@@ -168,5 +168,16 @@ app_service:
       rewrite:
         headers:
           - "Host: grafana.teleport.home.xxxxxxx.com"
-
           - "Origin: https://grafana.teleport.home.xxxxxxx.com"
+
+    - name: dozzle
+      description: "Dozzle Dashboard"
+      uri: "http://dozzle:8080"   # Internal Dozzle container
+      public_addr: "dozzle.teleport.xxxxxxx.com"
+      labels:
+        environment: monitoring
+      rewrite:
+        headers:
+          - "Host: dozzle.teleport.xxxxxxx.com"
+          - "Origin: https://dozzle.teleport.xxxxxxx.com"
+
