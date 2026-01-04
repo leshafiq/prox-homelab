@@ -1,4 +1,4 @@
-![Network Infra Design](Linkedin-Github Network draw.png)
+![Network Infra Design](Network.png)
 
 I’ve been building and refining my homelab as a system administrator. What started as curiosity has become a hands-on platform to experiment with infrastructure, security, automation, and self-hosted services.
 
