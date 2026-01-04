@@ -1,20 +1,29 @@
-Hello, my name is Mohamed Shafiq. Feel free to use my code to setup a homelab
+I’ve been building and refining my homelab as a system administrator. What started as curiosity has become a hands-on platform to experiment with infrastructure, security, automation, and self-hosted services.
 
-If you're running any NAS and wanted to bind SMB share folder to a LXC container, you need to install "CIFS-UTILS" in proxmox pve. 
-And then make a directory eg. /mnt/media. run command "mount -t cifs -o user="username" //ipaddress//foldername /directory. then set mount point to container eg. "pct set 104 -mp1 /mnt/media/,mp=/shared"
+🌐 Networking
+On the networking side, I’m using a MikroTik RB4011iGS+ as my primary DHCP server and firewall, handling VLAN segmentation and firewall rules. Switching is handled by Ubiquiti USW 24 PoE Pro and USW 48 PoE Pro switches, all managed via a self-hosted UniFi Controller.
 
-If you want to passthrough HDD without PCI controller, use code below:
- - ls /dev/disk/by-id
- - qm set 1xx -scsi1 /dev/disk/by-id/ata-xxxxxxxxxxxxxxxxxx
+🖥️ Hardware Setup
+2× Intel NUC servers - i5 11th Gen, 24GB RAM
+1× Dell R540 - Intel Xeon Silver 4210R, 64GB RAM
 
-you can also use samba docker to bind with ZFS Pool (Proxmox)
-- first you need to create your ZFS Storage
-- create a pool such as /zpool/media
-- change the permission of the folder with "chmod -R 777 /zpool/media"
-- bind the pool folder to a LXC container with "pct set 100 --mp1 /zpool/media/,mp=/mnt/media". you can change the "mp" which is the mount point to wherever you want.
-- create a samba application with the code "docker run --restart unless-stopped --name samba -p 139:139 -p 445:445 -v /share:/share -v /mnt/media:/mnt/media -d dperson/samba -u "username;password" -s "public;/share;yes;no;yes" -s "media;/mnt/media;yes;no;yes"
+🔧 Architecture Overview
+NUC #1 – Core Services & Applications
+This is my main application node, focused on security, automation, and observability:
+1. Traefik – Reverse proxy & load balancing
+2. CrowdSec (WAF) – Protecting web applications
+3. GitLab – Version control & CI/CD automation pipelines
+4. Teleport – Secure access to self-hosted applications
+5. Portainer – Docker container management
+6. Dozzle – Real-time Docker log monitoring
+7. AdGuard Home – Ad filtering with DoT/DoH upstream
+8. Grafana – Monitoring and visibility across servers
 
+NUC #2 – Storage & Media
+Dedicated to storage and personal data services:
+1. TrueNAS – Centralized storage
+2. Jellyfin – Home media server
+3. Immich – Self-hosted photo & gallery backup
 
-I am using Twingate as my Tunnel/VPN
-If you encounter an error when running the docker code, edit the code as the code below:
-docker run -d --env DNS_SERVER="192.168.1.1"  --env TWINGATE_NETWORK="yournetwork"........
+🐳 Container Platform Journey
+At the moment, all workloads are running on Docker. Over time, I’ve also experimented with Docker Swarm and Kubernetes, and I’m now planning a gradual migration toward Kubernetes to better align with cloud-native architectures and concepts such as ingress management, persistent volume claims, and declarative deployments with scalable workloads.
