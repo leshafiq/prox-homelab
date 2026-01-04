@@ -1,13 +1,15 @@
-![Network Infra Design](Network.png)
-
 I’ve been building and refining my homelab as a system administrator. What started as curiosity has become a hands-on platform to experiment with infrastructure, security, automation, and self-hosted services.
 
 🌐 Networking
 On the networking side, I’m using a MikroTik RB4011iGS+ as my primary DHCP server and firewall, handling VLAN segmentation and firewall rules. Switching is handled by Ubiquiti USW 24 PoE Pro and USW 48 PoE Pro switches, all managed via a self-hosted UniFi Controller.
 
+![Network Infra Design](Network.png)
+
 🖥️ Hardware Setup
 2× Intel NUC servers - i5 11th Gen, 24GB RAM
 1× Dell R540 - Intel Xeon Silver 4210R, 64GB RAM
+
+![Server Rack](Rack.png)
 
 🔧 Architecture Overview
 NUC #1 – Core Services & Applications
