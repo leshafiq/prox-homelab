@@ -14,20 +14,25 @@ On the networking side, I’m using a MikroTik RB4011iGS+ as my primary DHCP ser
 🔧 Architecture Overview
 NUC #1 – Core Services & Applications
 This is my main application node, focused on security, automation, and observability:
-1. Traefik – Reverse proxy & load balancing
+1. Traefik – Reverse proxy, load balancing, HTTPS reroute, SSL certificate
 2. CrowdSec (WAF) – Protecting web applications
 3. GitLab – Version control & CI/CD automation pipelines
 4. Teleport – Secure access to self-hosted applications
 5. Portainer – Docker container management
 6. Dozzle – Real-time Docker log monitoring
-7. AdGuard Home – Ad filtering with DoT/DoH upstream
+7. AdGuard Home – DNS server, Ad filtering with DoT/DoH upstream
 8. Grafana – Monitoring and visibility across servers
+9. Twingate - Zero trust tunnel access
+10. Bitwarden - Password manager
 
 NUC #2 – Storage & Media
 Dedicated to storage and personal data services:
-1. TrueNAS – Centralized storage
+1. TrueNAS (Main) – Centralized storage
 2. Jellyfin – Home media server
 3. Immich – Self-hosted photo & gallery backup
+
+Dell R540 - TrueNAS (Backup)
+To sync with NUC #2 Truenas (Main) for data protection
 
 🐳 Container Platform Journey
 At the moment, all workloads are running on Docker. Over time, I’ve also experimented with Docker Swarm and Kubernetes, and I’m now planning a gradual migration toward Kubernetes to better align with cloud-native architectures and concepts such as ingress management, persistent volume claims, and declarative deployments with scalable workloads.
