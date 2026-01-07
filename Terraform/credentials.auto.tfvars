@@ -1,0 +1,5 @@
+PROXMOX_URL    = "https://xxxx:8006/api2/json"
+PROXMOX_USER   = "xxxx"
+PROXMOX_TOKEN  = "xxxx"
+PUBLIC_SSH_KEY = "xxxx"
+CLOUD_PASS     = "xxxx"
