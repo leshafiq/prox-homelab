@@ -6,11 +6,12 @@
 2. To get started, first launch a server node with the cluster-init flag to enable clustering and a token that will be used as a shared secret to join additional servers to the cluster
     curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
     --cluster-init \
-    --tls-san=<FIXED_IP> # Optional, needed if using a fixed registration address
-    --k3s-extra-args "--disable=servicelb --disable traefik"
+    --tls-san=<FIXED_IP>
+    --disable=traefik
 
 3.  Get the secret token from first node and then join cluster
     sudo cat /var/lib/rancher/k3s/server/node-token
     curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
     --server https://<ip or hostname of server1>:6443 \
     --tls-san=<FIXED_IP> # Optional, needed if using a fixed registration address
+
