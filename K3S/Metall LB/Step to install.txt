@@ -5,3 +5,30 @@ Install Metall LLB
 4.  helm install metallb metallb/metallb --namespace metallb-system
 5.  kubectl get pods -n metallb-system #wait until all running then step 6.
 6.  kubectl apply -f lb-deployment.yaml
+7.  kubectl -n kube-system patch svc traefik \
+  -p '{"spec":{"loadBalancerIP":"10.10.10.100"}}'
+8. sudo nano /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+9. 
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    service:
+      spec:
+        loadBalancerIP: 10.10.10.100
+
+    deployment:
+      podAnnotations:
+        prometheus.io/port: "8082"
+        prometheus.io/scrape: "true"
+
+    providers:
+      kubernetesIngress:
+        publishedService:
+          enabled: true
+
+10.  sudo systemctl restart k3s
+
