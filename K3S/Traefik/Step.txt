@@ -1,7 +1,19 @@
-# =====[ 3 ENSURE TRAEFIK HAS A LOADBALANCER IP ]=============================================
-kubectl -n kube-system get svc traefik                               # view current type/IP
-kubectl -n kube-system patch svc traefik -p '{"spec":{"type":"LoadBalancer"}}'   # set to LB (idempotent)
-kubectl -n kube-system get svc traefik -o wide                        # verify EXTERNAL-IP assigned by MetalLB
+1.  Ensure that traefik is not running via K3S (kube-system)
+    kubectl get ingressclass
+    kubectl delete ingressclass traefik
 
-# (Optional) Save the Traefik EXTERNAL-IP to a variable for convenience.
-export TRAEFIK_IP="$(kubectl -n kube-system get svc traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+2.  Create values.yaml file
+
+3.  Run the installer
+    helm install traefik traefik/traefik \
+    --namespace traefik \
+    --create-namespace \
+    --values values.yaml \
+    --skip-crds \
+    --set ingressClass.enabled=true
+
+4.  Verify success
+    kubectl get ingressclass
+    kubectl get pods -n traefik -l app.kubernetes.io/name=traefik
+    kubectl get svc -n traefik
+    kubectl get ingressroute -n traefik
