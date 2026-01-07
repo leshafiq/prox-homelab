@@ -3,7 +3,7 @@
     sudo ufw allow from 10.42.0.0/16 to any #pods
     sudo ufw allow from 10.43.0.0/16 to any #services
 
-3. To get started, first launch a server node with the cluster-init flag to enable clustering and a token that will be used as a shared secret to join additional servers to the cluster
+2. To get started, first launch a server node with the cluster-init flag to enable clustering and a token that will be used as a shared secret to join additional servers to the cluster
     curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
     --cluster-init \
     --tls-san=<FIXED_IP> # Optional, needed if using a fixed registration address
