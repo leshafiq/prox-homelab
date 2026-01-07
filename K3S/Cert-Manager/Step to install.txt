@@ -1,3 +1,9 @@
 1.  helm repo add jetstack https://charts.jetstack.io
 2.  create values.yaml
 3.  helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --values values.yaml
+4.  create issuer-secret.yaml
+5.  for API token, use echo -n 'TOKEN' | base64
+6.  kubectl apply -f ./issuer-secret.yaml
+7.  check status: kubectl get secret --namespace cert-manager
+8.  create cluster-issuer.yaml
+9.  kubectl apply -f ./cluster-issuer.yaml

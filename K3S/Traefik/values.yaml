@@ -2,6 +2,15 @@ image:
   repository: traefik
   tag: v3.5.3
   pullPolicy: IfNotPresent
+service:
+  enabled: true
+  type: LoadBalancer
+  loadBalancerIP: "192.xxx.xx.xxx"
+  ports:
+    web:
+      port: 80
+    websecure:
+      port: 443
 ports:
   web:
     redirections:
@@ -17,12 +26,9 @@ ingressRoute:
     enabled: true
     entryPoints:
       - websecure
-    matchRule: Host(`traefik.kube.xxx.com`)
+    matchRule: Host(`traefik.xxx.com`)
     tls:
-      secretName: traefik-web-ui-tls 
-providers:
-  kubernetesGateway:
-    enabled: false
+      secretName: traefik-certificate-secret
 logs:
   general:
     level: ERROR

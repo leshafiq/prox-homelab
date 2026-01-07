@@ -20,3 +20,6 @@
     kubectl get svc -n traefik
     kubectl get ingressroute -n traefik
 
+5.  Once cert manager deployed, create certificate.yaml and then apply and upgrade
+    kubectl apply -f certificate.yaml
+    helm upgrade traefik traefik/traefik --namespace traefik -f values.yaml
