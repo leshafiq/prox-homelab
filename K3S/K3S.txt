@@ -10,3 +10,15 @@ setup:
   --tls-san 192.168.100.110 \
   --tls-san 192.168.100.111 \
   --tls-san 192.168.100.112
+
+4. Login to one of the cluster and copy the kubeconfig
+   sudo nano /etc/rancher/k3s/k3s.yaml
+
+5. Open the terminal/machine outside cluster, make directory and paste the config
+   nano ~/.kube/k3s.yaml
+   Change the server: field from 127.0.0.1 to the external IP or DNS of your k3s server
+
+6. Merge into your default kubeconfig
+   mkdir -p ~/.kube
+   KUBECONFIG=~/.kube/config:~/.kube/k3s.yaml kubectl config view --merge --flatten > ~/.kube/config.tmp
+   mv ~/.kube/config.tmp ~/.kube/config
