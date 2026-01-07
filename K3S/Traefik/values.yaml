@@ -1,0 +1,36 @@
+image:
+  repository: traefik
+  tag: v3.5.3
+  pullPolicy: IfNotPresent
+
+# Configure Entrypoints
+ports:
+  web:
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
+        permanent: true
+  websecure:
+    expose:
+      default: true
+
+# Traefik v3 Dashboard configuration
+ingressRoute:
+  dashboard:
+    enabled: true
+    entryPoints:
+      - websecure
+    matchRule: Host(`traefik.kube.xxx.com`)
+    tls:
+      secretName: traefik-web-ui-tls 
+
+providers:
+  kubernetesGateway:
+    enabled: false
+
+logs:
+  general:
+    level: ERROR
+  access:
+    enabled: false
