@@ -7,9 +7,7 @@ setup:
 3. 2nd and 3rd node (server/control plane) - curl -sfL https://get.k3s.io | \
   K3S_TOKEN=$token sh -s - server \
   --server https://192.168.100.110:6443 \
-  --tls-san 192.168.100.110 \
-  --tls-san 192.168.100.111 \
-  --tls-san 192.168.100.112
+  --tls-san 192.168.100.100 (the IP of external load balancer eg: Metallb)
 
 4. Login to one of the cluster and copy the kubeconfig
    sudo nano /etc/rancher/k3s/k3s.yaml
@@ -22,3 +20,4 @@ setup:
    mkdir -p ~/.kube
    KUBECONFIG=~/.kube/config:~/.kube/k3s.yaml kubectl config view --merge --flatten > ~/.kube/config.tmp
    mv ~/.kube/config.tmp ~/.kube/config
+
