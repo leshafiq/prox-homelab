@@ -1,0 +1,4 @@
+1.  get the script checker from Longhorn and run it
+    curl -sSfL -o longhornctl https://github.com/longhorn/cli/releases/download/v1.10.1/longhornctl-linux-amd64
+    chmod +x longhornctl
+    ./longhornctl check preflight --kubeconfig ~/.kube/config --namespace default
