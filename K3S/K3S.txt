@@ -15,3 +15,14 @@
     --server https://<ip or hostname of server1>:6443 \
     --tls-san=<FIXED_IP> # Optional, needed if using a fixed registration address
 
+4.  to manage cluster externally, copy the content in node: /etc/rancher/k3s/k3s.yaml
+    paste here: nano ~/.kube/k3s.yaml
+
+5.  Merge into your default kubeconfig
+    mkdir -p ~/.kube
+    KUBECONFIG=~/.kube/config:~/.kube/k3s.yaml kubectl config view --merge --flatten > ~/.kube/config.tmp
+    mv ~/.kube/config.tmp ~/.kube/config
+
+
+
+
