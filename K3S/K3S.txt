@@ -1,23 +1,16 @@
-setup:
+1.  If you wish to keep ufw enabled, by default, the following rules are required:
+    sudo ufw allow 6443/tcp #apiserver
+    sudo ufw allow from 10.42.0.0/16 to any #pods
+    sudo ufw allow from 10.43.0.0/16 to any #services
 
-1. 1st node (master) - curl -sfL https://get.k3s.io |   K3S_TOKEN=${TOKEN} sh -s - server   --cluster-init   --tls-san 192.168.100.110   --tls-san 192.168.100.111   --tls-san 192.168.100.112   --write-kubeconfig-mode=644
+3. To get started, first launch a server node with the cluster-init flag to enable clustering and a token that will be used as a shared secret to join additional servers to the cluster
+    curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
+    --cluster-init \
+    --tls-san=<FIXED_IP> # Optional, needed if using a fixed registration address
+    --k3s-extra-args "--disable=servicelb --disable traefik"
 
-2. sudo cat /var/lib/rancher/k3s/server/token
-
-3. 2nd and 3rd node (server/control plane) - curl -sfL https://get.k3s.io | \
-  K3S_TOKEN=$token sh -s - server \
-  --server https://192.168.100.110:6443 \
-  --tls-san 192.168.100.100 (the IP of external load balancer eg: Metallb)
-
-4. Login to one of the cluster and copy the kubeconfig
-   sudo nano /etc/rancher/k3s/k3s.yaml
-
-5. Open the terminal/machine outside cluster, make directory and paste the config
-   nano ~/.kube/k3s.yaml
-   Change the server: field from 127.0.0.1 to the external IP or DNS of your k3s server
-
-6. Merge into your default kubeconfig
-   mkdir -p ~/.kube
-   KUBECONFIG=~/.kube/config:~/.kube/k3s.yaml kubectl config view --merge --flatten > ~/.kube/config.tmp
-   mv ~/.kube/config.tmp ~/.kube/config
-
+3.  Get the secret token from first node and then join cluster
+    sudo cat /var/lib/rancher/k3s/server/node-token
+    curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
+    --server https://<ip or hostname of server1>:6443 \
+    --tls-san=<FIXED_IP> # Optional, needed if using a fixed registration address
