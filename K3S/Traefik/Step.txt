@@ -5,6 +5,8 @@
 2.  Create values.yaml file
 
 3.  Run the installer
+    helm repo add traefik https://traefik.github.io/charts
+    helm repo update
     helm install traefik traefik/traefik \
     --namespace traefik \
     --create-namespace \
@@ -17,3 +19,4 @@
     kubectl get pods -n traefik -l app.kubernetes.io/name=traefik
     kubectl get svc -n traefik
     kubectl get ingressroute -n traefik
+
