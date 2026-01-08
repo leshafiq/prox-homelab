@@ -1,0 +1,6 @@
+1.  helm repo add authentik https://charts.goauthentik.io
+    helm repo update
+2.  create values.yaml
+3.  generate secret-key
+    openssl rand 60 | base64 -w 32
+4.  helm install authentik authentik/authentik --namespace authentik --create-namespace -f values.yaml

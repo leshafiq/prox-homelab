@@ -1,0 +1,27 @@
+global:
+  image:
+    repository: "ghcr.io/goauthentik/server"
+    tag: "2025.10.1"
+    pullPolicy: IfNotPresent
+authentik:
+  secret_key: "SECRET-KEY"
+  postgresql:
+    host: "authentik-postgresql"
+    name: "db-name"
+    user: "user"
+    password: "SUPER-PASSWORD"
+    port: 5432
+  # email:
+  #   host: "smtp.gmail.com"
+  #   port: 587
+  #   username: ""
+  #   password: ""
+  #   use_tls: true
+  #   from: ""
+  error_reporting:
+    enabled: true
+  log_level: error
+postgresql:
+  enabled: true
+  auth:
+    password: "SUPER-PASSWORD"
