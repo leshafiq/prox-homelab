@@ -1,6 +1,11 @@
 1.  helm repo add authentik https://charts.goauthentik.io
     helm repo update
 2.  create values.yaml
-3.  generate secret-key
-    openssl rand 60 | base64 -w 32
+3.  key secret key authentik-creds
+    kubectl create secret generic authentik-creds   
+    --from-literal=password='super-password'   
+    --from-literal=postgres-password='super-password'   
+    --from-literal=replication-password='super-password'   
+    --from-literal=secret_key='super-password' 
+    -n authentik
 4.  helm install authentik authentik/authentik --namespace authentik --create-namespace -f values.yaml

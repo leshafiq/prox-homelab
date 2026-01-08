@@ -1,16 +1,37 @@
-global:
-  image:
-    repository: "ghcr.io/goauthentik/server"
-    tag: "2025.10.1"
-    pullPolicy: IfNotPresent
-authentik:
-  secret_key: "SECRET-KEY"
-  postgresql:
-    host: "authentik-postgresql"
-    name: "db-name"
-    user: "user"
-    password: "SUPER-PASSWORD"
-    port: 5432
+postgresql:
+  enabled: true
+  auth:
+    existingSecret: authentik-creds
+
+redis:
+  enabled: true
+
+server:
+  env:
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-creds
+          key: password
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-creds
+          key: secret_key
+
+worker:
+  env:
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-creds
+          key: password
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-creds
+          key: secret_key
+
   # email:
   #   host: "smtp.gmail.com"
   #   port: 587
@@ -18,10 +39,3 @@ authentik:
   #   password: ""
   #   use_tls: true
   #   from: ""
-  error_reporting:
-    enabled: true
-  log_level: error
-postgresql:
-  enabled: true
-  auth:
-    password: "SUPER-PASSWORD"
