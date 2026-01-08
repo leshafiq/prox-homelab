@@ -6,11 +6,11 @@
 2.  add another pod for coredns
     kubectl scale deployment coredns -n kube-system --replicas=2
 
-3.  sudo apt install nfs-common
+3.  sudo apt install nfs-common -y
 
-4.  sudo apt install cryptsetup
+4.  sudo apt install cryptsetup -y
 
-5.  sudo apt install dmsetup
+5.  sudo apt install dmsetup -y
 
 6.  sudo modprobe nfs
 
