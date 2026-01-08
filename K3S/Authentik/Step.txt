@@ -9,3 +9,9 @@
     --from-literal=secret_key='super-password' 
     -n authentik
 4.  helm install authentik authentik/authentik --namespace authentik --create-namespace -f values.yaml
+5.  If postgres password is incorrect in logs (FATAL)
+    # List the PVCs to find the postgres one
+    kubectl get pvc -n authentik
+    # Delete the data-postgresql-0 (or similar named) claim
+    kubectl delete pvc data-authentik-postgresql-0 -n authentik
+6.  install back
