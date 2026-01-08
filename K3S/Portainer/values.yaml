@@ -1,0 +1,9 @@
+image:
+  repository: portainer/portainer-ce
+  tag: 2.34.0
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+
+# persistence:
+#   existingClaim: "portainer"

@@ -1,0 +1,7 @@
+1.  helm repo add portainer https://portainer.github.io/k8s/
+
+2.  helm repo update
+
+3.  create values.yaml
+
+4.  helm install portainer portainer/portainer --namespace portainer --create-namespace --values values.yaml
