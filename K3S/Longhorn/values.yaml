@@ -1,0 +1,4 @@
+longhornUI:
+  replicas: 1
+#defaultBackupStore:
+  #backupTarget: "your-backup-target"
