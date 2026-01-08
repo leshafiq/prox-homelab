@@ -27,3 +27,11 @@
 11. sudo systemctl stop multipathd multipathd.socket
 
 12. sudo systemctl disable multipathd multipathd.socket
+
+13. helm repo add longhorn https://charts.longhorn.io
+
+14. helm repo update
+
+15. craete values.yaml file
+
+16. helm install longhorn longhorn/longhorn --namespace longhorn-system --create-namespace --values values.yaml
