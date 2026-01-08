@@ -35,3 +35,5 @@
 15. craete values.yaml file
 
 16. helm install longhorn longhorn/longhorn --namespace longhorn-system --create-namespace --values values.yaml
+
+17. check all status: kubectl get all --namespace longhorn-system
