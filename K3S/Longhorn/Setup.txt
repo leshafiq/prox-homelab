@@ -2,5 +2,28 @@
     curl -sSfL -o longhornctl https://github.com/longhorn/cli/releases/download/v1.10.1/longhornctl-linux-amd64
     chmod +x longhornctl
     ./longhornctl check preflight --kubeconfig ~/.kube/config --namespace default
+
 2.  add another pod for coredns
     kubectl scale deployment coredns -n kube-system --replicas=2
+
+3.  sudo apt install nfs-common
+
+4.  sudo apt install cryptsetup
+
+5.  sudo apt install dmsetup
+
+6.  sudo modprobe nfs
+
+7.  sudo modprobe dm_crypt
+
+8   sudo nano /etc/modules-load.d/k3s-modules.conf
+    nfs
+    dm_crypt
+
+9.  sudo systemctl enable --now iscsid
+
+10. sudo systemctl status iscsid
+
+11. sudo systemctl stop multipathd multipathd.socket
+
+12. sudo systemctl disable multipathd multipathd.socket
