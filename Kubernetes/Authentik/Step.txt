@@ -15,3 +15,11 @@
     # Delete the data-postgresql-0 (or similar named) claim
     kubectl delete pvc data-authentik-postgresql-0 -n authentik
 6.  install back
+7.  Outpost yaml
+    authentik_host: https://authentik.xxx.com/
+    kubernetes_replicas: 1
+    kubernetes_namespace: authentik
+    object_naming_template: ak-outpost-%(name)s
+    kubernetes_service_type: ClusterIP
+    kubernetes_disabled_components:
+    - ingress
