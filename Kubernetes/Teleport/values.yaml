@@ -1,0 +1,4 @@
+clusterName: teleport.kube.shafiqtechub.com
+proxyListenerMode: multiplex
+service:
+  type: ClusterIP

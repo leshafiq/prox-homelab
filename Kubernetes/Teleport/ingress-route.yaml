@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: teleport-ingressroute
+  namespace: teleport-cluster
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`teleport.kube.shafiqtechub.com`)
+      kind: Rule
+      services:
+        - name: teleport-cluster
+          port: 443
+          serversTransport: teleport-skip-verify
+  tls:
+    secretName: teleport-certificate-secret
