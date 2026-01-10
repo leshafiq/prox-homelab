@@ -13,8 +13,10 @@
 3.  Get the secret token from first node and then join cluster
     sudo cat /var/lib/rancher/k3s/server/node-token
     curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
-    --server https://<ip or hostname of server1>:6443 \
-    --tls-san=<FIXED_IP> # Optional, needed if using a fixed registration address
+    --server https://{serverip}:6443 \
+    --tls-san=<FIXED_IP> \
+    --disable=traefik \
+    --disable servicelb
 
 4.  to manage cluster externally, copy the content in node: /etc/rancher/k3s/k3s.yaml
     paste here: nano ~/.kube/k3s.yaml
@@ -23,6 +25,7 @@
     mkdir -p ~/.kube
     KUBECONFIG=~/.kube/config:~/.kube/k3s.yaml kubectl config view --merge --flatten > ~/.kube/config.tmp
     mv ~/.kube/config.tmp ~/.kube/config
+
 
 
 
