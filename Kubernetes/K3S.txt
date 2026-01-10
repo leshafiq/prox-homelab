@@ -8,6 +8,7 @@
     --cluster-init \
     --tls-san=<FIXED_IP>
     --disable=traefik
+    --disable servicelb
 
 3.  Get the secret token from first node and then join cluster
     sudo cat /var/lib/rancher/k3s/server/node-token
