@@ -26,6 +26,10 @@
     KUBECONFIG=~/.kube/config:~/.kube/k3s.yaml kubectl config view --merge --flatten > ~/.kube/config.tmp
     mv ~/.kube/config.tmp ~/.kube/config
 
+6.  To remove a node
+    shutdown the node
+    kubectl drain <old-hostname> --ignore-daemonsets --delete-emptydir-data
+    kubectl delete node <old-hostname>
 
 
 
