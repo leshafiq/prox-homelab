@@ -1,0 +1,7 @@
+1.  systemctl stop pve-cluster
+    systemctl stop corosync
+2.  pmxcfs -l
+3.  rm /etc/pve/corosync.conf
+    rm -rf /etc/corosync/*
+4.  killall pmxcfs
+    systemctl start pve-cluster
