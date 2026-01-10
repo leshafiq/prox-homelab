@@ -26,3 +26,11 @@
 
 6.  check the certificate status
     kubectl get certificate -n traefik
+
+7.  To pass real IP to traefik, check the traefik service kubernetes_service_type
+    kubectl get svc traefik -n traefik -o jsonpath='{.spec.externalTrafficPolicy}'
+    If Cluster, delete it then upgrade helm: 
+    kubectl delete svc traefik -n traefik
+    helm upgrade traefik traefik/traefik --namespace traefik -f values.yaml
+    If still Cluster, then manually patch it: 
+    kubectl patch svc traefik -n traefik -p '{"spec":{"externalTrafficPolicy":"Local"}}'

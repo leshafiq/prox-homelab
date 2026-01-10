@@ -1,11 +1,14 @@
+deployment:
+  kind: DaemonSet
 image:
   repository: traefik
   tag: v3.5.3
   pullPolicy: IfNotPresent
 service:
   enabled: true
+  externalTrafficPolicy: Local
   type: LoadBalancer
-  loadBalancerIP: "192.xxx.xx.xxx"
+  loadBalancerIP: "192.168.1.1"
   ports:
     web:
       port: 80
@@ -21,16 +24,23 @@ ports:
   websecure:
     expose:
       default: true
+    forwardedHeaders:
+      trustedIPs:
+        - 127.0.0.1/32
+        - 10.42.0.0/16
+        - 192.168.1.0/24
 ingressRoute:
   dashboard:
     enabled: true
     entryPoints:
       - websecure
-    matchRule: Host(`traefik.xxx.com`)
+    matchRule: Host(`traefik.kube.shafiqtechub.com`)
+    middlewares:
+        - name: authentik-middleware
     tls:
       secretName: traefik-certificate-secret
 logs:
   general:
     level: ERROR
   access:
-    enabled: false
+    enabled: true
