@@ -2,4 +2,16 @@
 
 2.  create values.yaml
 
-2.  helm install crowdsec crowdsec/crowdsec -n crowdsec -f values.yaml
+3.  helm install crowdsec crowdsec/crowdsec -n crowdsec -f values.yaml
+
+4.  Check if the Bouncer is Connected
+    kubectl exec -n crowdsec -it $(kubectl get pods -n crowdsec -l type=lapi -o name) -- cscli bouncers list
+    
+5.  Check if the Ban is "Live" in CrowdSec
+    kubectl exec -n crowdsec -it $(kubectl get pods -n crowdsec -l type=lapi -o name) -- cscli decisions list
+
+6.  To copy secret to other namespace
+    kubectl apply -f https://github.com/emberstack/kubernetes-reflector/releases/latest/download/reflector.yaml
+    kubectl annotate secret crowdsec-secrets -n crowdsec \
+    reflector.v1.k8s.emberstack.com/reflection-allowed="true" \
+    reflector.v1.k8s.emberstack.com/reflection-auto-enabled="true"
