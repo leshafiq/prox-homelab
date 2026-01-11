@@ -1,0 +1,5 @@
+1.  kubectl create ns crowdsec
+
+2.  create values.yaml
+
+2.  helm install crowdsec crowdsec/crowdsec -n crowdsec -f values.yaml
