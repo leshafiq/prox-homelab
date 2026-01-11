@@ -1,0 +1,4 @@
+1.  helm repo add teleport https://charts.releases.teleport.dev
+    helm repo update
+2.  create values.yaml
+3.  helm install teleport-cluster teleport/teleport-cluster   -n teleport-cluster   -f values.yaml   --set crds.install=true
