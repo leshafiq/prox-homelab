@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: dozzle-certificate
+  namespace: default
+spec:
+  secretName: dozzle-certificate-secret
+  issuerRef:
+    name: cloudflare-clusterissuer
+    kind: ClusterIssuer
+  dnsNames:
+    - dozzle.xxx.com
+  privateKey:
+    rotationPolicy: Always

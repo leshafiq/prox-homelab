@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dozzle-ingressroute
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`dozzle.xxx.com`)
+      kind: Rule
+      services:
+        - name: dozzle-service
+          port: 8080
+  tls:
+    secretName: dozzle-certificate-secret
