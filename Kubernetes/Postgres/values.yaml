@@ -1,0 +1,58 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: app-db
+  namespace: postgres
+spec:
+  instances: 2
+  primaryUpdateStrategy: unsupervised
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.1
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+  walStorage:
+    size: 10Gi
+    storageClass: longhorn
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "3Gi"
+  postgresql:
+    parameters:
+      max_connections: "300"
+      shared_buffers: "1GB"
+      effective_cache_size: "3GB"
+      maintenance_work_mem: "256MB"
+      wal_buffers: "16MB"
+      max_wal_size: "4GB"
+      min_wal_size: "1GB"
+      checkpoint_completion_target: "0.9"
+      log_min_duration_statement: "500ms"
+      log_statement: "ddl"
+
+
+  # ------------------------
+  # Bootstrap (initial DB)
+  # ------------------------
+  bootstrap:
+    initdb:
+      database: app
+      owner: appuser
+      encoding: UTF8
+      localeCType: C
+      localeCollate: C
+
+  # ------------------------
+  # Pod scheduling safety
+  # ------------------------
+  affinity:
+    enablePodAntiAffinity: true
+    podAntiAffinityType: preferred
+
+  # ------------------------
+  # Disruption protection
+  # ------------------------
+  enablePDB: true

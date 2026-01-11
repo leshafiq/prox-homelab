@@ -1,0 +1,9 @@
+1.  helm repo add cnpg https://cloudnative-pg.github.io/charts
+    helm repo update
+2.  helm install cnpg \
+     cnpg/cloudnative-pg \
+     --namespace cnpg-system \
+     --create-namespace \
+     --set image.pullPolicy=IfNotPresent \
+     --set monitoring.enabled=true
+3.  kubectl apply -f values.yaml
