@@ -2,3 +2,6 @@ clusterName: teleport.kube.shafiqtechub.com
 proxyListenerMode: multiplex
 service:
   type: ClusterIP
+operator:
+  enabled: true
+  installCRDs: always

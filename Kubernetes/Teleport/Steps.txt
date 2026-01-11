@@ -2,3 +2,5 @@
     helm repo update
 2.  create values.yaml
 3.  helm install teleport-cluster teleport/teleport-cluster   -n teleport-cluster   -f values.yaml   --set crds.install=true
+4.  Check crds
+    kubectl get crds | grep resources.teleport.dev
