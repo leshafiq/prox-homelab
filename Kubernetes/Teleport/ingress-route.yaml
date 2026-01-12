@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`teleport.kube.shafiqtechub.com`)
+    - match: Host(`teleport.xxxxxx.com`) || HostRegexp(`^.+\.teleport\.subdomain\.domain\.com$`)
       kind: Rule
       services:
         - name: teleport-cluster
@@ -15,3 +15,26 @@ spec:
           serversTransport: teleport-skip-verify
   tls:
     secretName: teleport-certificate-secret
+    options:
+      name: teleport-tls-options
+      namespace: teleport-cluster
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: teleport-skip-verify
+  namespace: teleport-cluster
+spec:
+  insecureSkipVerify: true
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: TLSOption
+metadata:
+  name: teleport-tls-options
+  namespace: teleport-cluster
+spec:
+  alpnProtocols:
+    - h2
+    - http/1.1

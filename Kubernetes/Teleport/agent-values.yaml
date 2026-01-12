@@ -1,0 +1,45 @@
+roles: app
+proxyAddr: teleport.xxxxxxxx.com:443
+authToken: "xxxxxxxxxx" 
+
+tls:
+    secretName: teleport-certificate-secret
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 150Mi
+  limits:
+    cpu: 2000m
+    memory: 2048Mi
+
+# Define your apps here
+apps:
+  - name: sth01
+    description: "STH-01 Dashboard"
+    uri: "http://192.168.1.1:80"   # STH-01 Server
+    public_addr: "sth01.teleport.xxxxxxxx.com"
+    labels:
+      environment: server
+    rewrite:
+      headers:
+        - "Host: sth01.teleport.xxxxxxxx.com"
+        - "Origin: https://sth01.teleport.xxxxxxxx.com"
+  - name: "portainer"
+    uri: "http://portainer.portainer.svc.cluster.local:9000"
+    public_addr: "portainer.teleport.xxxxxxxx.com"
+    labels:
+      environment: server
+    rewrite:
+      redirect:
+        - "localhost"
+        - "portainer"
+  - name: "longhorn"
+    description: "Longhorn Dashboard"
+    uri: "http://longhorn-frontend.longhorn-system.svc.cluster.local:80"
+    public_addr: "longhorn.teleport.xxxxxxxx.com"
+    insecure_skip_verify: true
+    rewrite:
+      headers:
+        - "Host: longhorn.teleport.xxxxxxxx.com"
+        - "Origin: https://longhorn.teleport.xxxxxxxx.com"

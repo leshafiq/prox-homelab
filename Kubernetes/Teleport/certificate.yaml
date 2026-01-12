@@ -9,4 +9,5 @@ spec:
     name: cloudflare-clusterissuer
     kind: ClusterIssuer
   dnsNames:
-    - teleport.kube.shafiqtechub.com
+    - teleport.xxx.com
+    - "*.teleport.xxx.com"

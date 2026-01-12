@@ -1,7 +1,48 @@
-clusterName: teleport.kube.shafiqtechub.com
+clusterName: teleport.xxxxxxxxx.com
 proxyListenerMode: multiplex
 service:
   type: ClusterIP
+proxy:
+  teleportConfig:
+    proxy_service:
+      trust_x_forwarded_for: true
+# auth:
+#   teleportConfig:
+#     auth_service:
+#       web_idle_timeout: 30h
+#       disconnect_expired_cert: no
+#       authentication:
+#         type: local
+#         default_session_ttl: 30h
+#         locking_mode: best_effort
+#         second_factor: optional
+#         webauthn:
+#           rp_id: teleport.xxxxxxxxx.com
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 150Mi
+  limits:
+    cpu: 2000m
+    memory: 2048Mi
+
 operator:
   enabled: true
   installCRDs: always
+
+app_service:
+  enabled: true
+auth:
+  clusterName: teleport.xxxxxxxxx.com
+  publicAddr: teleport.xxxxxxxxx.com
+  additionalDNSEntries:
+    - teleport-cluster.teleport-cluster.svc.cluster.local
+# proxy:
+#   public_addr: 
+#     - "teleport.xxxxxxxxx.com:443"
+#     - "*.teleport.xxxxxxxxx.com:443"
+#   web_listen_addr: "0.0.0.0:3080"
+
+# helm upgrade teleport-cluster teleport/teleport-cluster -n teleport-cluster -f values.yaml
+# helm upgrade teleport-agent teleport/teleport-kube-agent   --namespace teleport-cluster   -f agent-values.yaml
