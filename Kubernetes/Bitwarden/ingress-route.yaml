@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bitwarden-ingressroute
+  namespace: bitwarden
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`bitwarden.xxxxxx.com`)
+      kind: Rule
+      services:
+        - name: bitwarden-self-host-web
+          port: 5000
+  tls:
+    secretName: bitwarden-certificate-secret
