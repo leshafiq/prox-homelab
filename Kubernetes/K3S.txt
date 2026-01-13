@@ -10,6 +10,8 @@
     --disable=traefik \
     --disable servicelb
 
+    (Proceed to setup kube-vip in Kube-vip-steps.txt)
+
 3.  Get the secret token from first node and then join cluster
     sudo cat /var/lib/rancher/k3s/server/node-token
     curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
