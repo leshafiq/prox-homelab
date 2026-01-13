@@ -17,6 +17,11 @@
     --leaderElection
 9.  nano /var/lib/rancher/k3s/server/manifests/kube-vip-manifest.yaml
 10. paste the content generated, example as below. And then apply it
+11. Join other node according to K3S.txt
+12. Then install kube-vip-load-balancer
+    kubectl apply -f https://raw.githubusercontent.com/kube-vip/kube-vip-cloud-provider/main/manifest/kube-vip-cloud-controller.yaml
+13. Set Loadbalance range
+    kubectl create configmap -n kube-system kubevip --from-literal range-global=192.168.1.220-192.168.1.230
 
 
 apiVersion: apps/v1
