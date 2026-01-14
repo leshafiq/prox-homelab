@@ -4,8 +4,12 @@
 3.  helm install teleport-cluster teleport/teleport-cluster   -n teleport-cluster   -f values.yaml   --set crds.install=true
 4.  Check crds
     kubectl get crds | grep resources.teleport.dev
-5.  create teleport-auth-token secret
-6.  kubectl patch secret teleport-auth-token \
+5.  create agent-values.yaml
+6.  helm upgrade teleport-agent teleport/teleport-kube-agent \
+      --namespace teleport-cluster \
+      -f agent-values.yaml
+7.  create teleport-auth-token secret
+8.  kubectl patch secret teleport-auth-token \
   -n teleport-cluster \
   --type merge \
   -p '{
@@ -19,3 +23,4 @@
       }
     }
   }'
+
