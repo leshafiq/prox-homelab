@@ -1,5 +1,5 @@
 # -- Change GitLab settings here...
-external_url 'https://gitlab.xxx.com'  # <-- Replace with your GitLab FQDN
+external_url 'https://gitlab.xxxx.com'  # <-- Replace with your GitLab FQDN
 
 # -- (Optional) Change GitLab Shell settings here...
 gitlab_rails['gitlab_shell_ssh_port'] = 2424
@@ -8,6 +8,21 @@ gitlab_rails['gitlab_shell_ssh_port'] = 2424
 letsencrypt['enable'] = false
 nginx['listen_port']  = 80
 nginx['listen_https'] = false
+
+puma['worker_processes'] = 0
+
+sidekiq['concurrency'] = 10
+
+prometheus_monitoring['enable'] = false
+
+gitlab_rails['env'] = {
+  'MALLOC_CONF' => 'dirty_decay_ms:1000,muzzy_decay_ms:1000'
+}
+
+gitaly['env'] = {
+  'MALLOC_CONF' => 'dirty_decay_ms:1000,muzzy_decay_ms:1000',
+  'GITALY_COMMAND_SPAWN_MAX_PARALLEL' => '2'
+}
 
 # --> (Optional) Enable Container Registry settings here...
 # registry_external_url 'https://your-registry-fqdn'  # <-- Replace with your registry FQDN
