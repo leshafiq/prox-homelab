@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jellyfin
+---
+# --- SECTION 1: CONFIG STORAGE (Longhorn) ---
+# Longhorn handles this automatically. 
+# We use ReadWriteOnce (RWO) because block storage (Longhorn) attaches to one pod at a time.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-pvc-config
+  namespace: jellyfin
+spec:
+  storageClassName: longhorn
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+# --- SECTION 2: MEDIA STORAGE (NAS / NFS) ---
+# Points to 10.10.10.4 /mnt/Senku/Kubernetes/Media
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-pv-nfs-media
+  namespace: jellyfin
+spec:
+  storageClassName: ""
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadOnlyMany               
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: /mnt/Media   # <--- Your NAS Path
+    server: 192.168.1.1            # <--- Your NAS IP
+    readOnly: true                # <--- Enforce Read Only at NFS level
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-pvc-media
+  namespace: jellyfin
+spec:
+  storageClassName: ""
+  volumeName: jellyfin-pv-nfs-media
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+# --- SECTION 3: DEPLOYMENT ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jellyfin
+  name: jellyfin
+  namespace: jellyfin
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate                # <--- Safer for Database consistency
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      containers:
+      - env:
+        - name: JELLYFIN_PublishedServerUrl
+          value: "jellyfin.example.com" # <--- Set this to your intended DNS name
+        - name: PGID
+          value: "3000"            # <--- Ensure this ID works on your NAS
+        - name: PUID
+          value: "0"           # <--- Ensure this ID works on your NAS
+        - name: TZ
+          value: Asia/Kuala_Lumpur
+        image: ghcr.io/linuxserver/jellyfin
+        imagePullPolicy: Always
+        name: jellyfin
+        ports:
+        - containerPort: 8096
+          name: http-tcp
+          protocol: TCP
+        - containerPort: 8920
+          name: https-tcp
+          protocol: TCP
+        - containerPort: 1900
+          name: dlna-udp
+          protocol: UDP
+        - containerPort: 7359
+          name: discovery-udp
+          protocol: UDP
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /config
+          name: volume-config
+        - mountPath: /data/media
+          name: volume-media
+          readOnly: true
+      volumes:
+      - name: volume-config
+        persistentVolumeClaim:
+          claimName: jellyfin-pvc-config
+      - name: volume-media
+        persistentVolumeClaim:
+          claimName: jellyfin-pvc-media
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+# --- SECTION 4: SERVICES (Internal) ---
+# We use ClusterIP. Traefik (running elsewhere) will route traffic here.
+kind: Service
+apiVersion: v1
+metadata:
+  name: jellyfin-tcp
+  namespace: jellyfin
+spec:
+  selector:
+    app: jellyfin
+  type: ClusterIP
+  ports:
+  - port: 8096
+    targetPort: 8096
+    name: http-tcp
+    protocol: TCP
+  - port: 8920
+    targetPort: 8920
+    name: https-tcp
+    protocol: TCP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: jellyfin-udp
+  namespace: jellyfin
+spec:
+  selector:
+    app: jellyfin
+  type: ClusterIP
+  ports:
+  - port: 1900
+    targetPort: 1900
+    name: dlna-udp
+    protocol: UDP
+  - port: 7359
+    targetPort: 7359
+    name: discovery-udp
+    protocol: UDP
+---
