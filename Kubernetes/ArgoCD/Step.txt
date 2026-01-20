@@ -1,0 +1,5 @@
+1.  create namespace argocd
+2.  create values.yaml
+3.  kubectl apply -f deployment.yaml --server-side -n argocd
+4.  create config.yaml
+5.  kubectl rollout restart deployment argocd-server -n argocd
