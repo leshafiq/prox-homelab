@@ -5,6 +5,7 @@
 2.  Create values.yaml file
 
 3.  Run the installer
+    kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.5/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
     helm repo add traefik https://traefik.github.io/charts
     helm repo update
     helm install traefik traefik/traefik \
@@ -34,3 +35,4 @@
     helm upgrade traefik traefik/traefik --namespace traefik -f values.yaml
     If still Cluster, then manually patch it: 
     kubectl patch svc traefik -n traefik -p '{"spec":{"externalTrafficPolicy":"Local"}}'
+
