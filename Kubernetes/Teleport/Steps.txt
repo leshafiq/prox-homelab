@@ -13,6 +13,8 @@
       --namespace teleport-cluster \
       -f agent-values.yaml
 9.  create teleport-auth-token secret
+    kubectl exec -it teleport-cluster-auth-xxxx-xxxx -n teleport-cluster -- tctl tokens add --type=app --ttl=8760h
+    kubectl create secret generic teleport-auth-token --from-literal=auth-token=TOKEN-HERE -n teleport-cluster
 10.  kubectl patch secret teleport-auth-token \
   -n teleport-cluster \
   --type merge \
@@ -27,5 +29,6 @@
       }
     }
   }'
+
 
 
