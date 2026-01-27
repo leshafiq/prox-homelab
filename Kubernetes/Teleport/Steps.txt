@@ -15,20 +15,10 @@
 9.  create teleport-auth-token secret
     kubectl exec -it teleport-cluster-auth-xxxx-xxxx -n teleport-cluster -- tctl tokens add --type=app --ttl=8760h
     kubectl create secret generic teleport-auth-token --from-literal=auth-token=TOKEN-HERE -n teleport-cluster
-10.  kubectl patch secret teleport-auth-token \
-  -n teleport-cluster \
-  --type merge \
-  -p '{
-    "metadata": {
-      "labels": {
-        "app.kubernetes.io/managed-by": "Helm"
-      },
-      "annotations": {
-        "meta.helm.sh/release-name": "teleport-agent",
-        "meta.helm.sh/release-namespace": "teleport-cluster"
-      }
-    }
-  }'
+10. kubectl label secret teleport-auth-token -n teleport-cluster app.kubernetes.io/managed-by=Helm
+    kubectl annotate secret teleport-auth-token -n teleport-cluster meta.helm.sh/release-name=teleport-agent
+    kubectl annotate secret teleport-auth-token -n teleport-cluster meta.helm.sh/release-namespace=teleport-cluster
+11. helm install teleport-agent teleport/teleport-kube-agent   --namespace teleport-cluster   -f agent-values.yaml
 
 
 
