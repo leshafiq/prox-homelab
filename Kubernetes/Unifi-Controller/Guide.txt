@@ -1,0 +1,4 @@
+Factory reset via SSH
+ssh ubnt@device-ip
+syswrapper.sh restore-default & set-default &
+set-inform http://unifi-controller-ip:8080/inform
