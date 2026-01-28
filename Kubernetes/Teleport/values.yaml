@@ -1,23 +1,12 @@
-clusterName: teleport.xxxxxxxxx.com
-proxyListenerMode: multiplex
-service:
-  type: ClusterIP
-proxy:
-  teleportConfig:
-    proxy_service:
-      trust_x_forwarded_for: true
-# auth:
-#   teleportConfig:
-#     auth_service:
-#       web_idle_timeout: 30h
-#       disconnect_expired_cert: no
-#       authentication:
-#         type: local
-#         default_session_ttl: 30h
-#         locking_mode: best_effort
-#         second_factor: optional
-#         webauthn:
-#           rp_id: teleport.xxxxxxxxx.com
+roles: app
+proxyAddr: teleport.xxxxxx.com:443
+authToken: null
+joinTokenSecret:
+  name: teleport-auth-token
+  key: auth-token 
+
+tls:
+  secretName: teleport-certificate-secret
 
 resources:
   requests:
@@ -27,22 +16,29 @@ resources:
     cpu: 2000m
     memory: 2048Mi
 
-operator:
-  enabled: true
-  installCRDs: always
+# Define your apps here
+apps:
+  - name: sth01
+    description: "STH-01 Dashboard"
+    uri: "http://192.168.1.1:81"   # STH-01 Server
+    public_addr: "sth01.teleport.xxxxx.com"
+    labels:
+      environment: dashboard
+    rewrite:
+      headers:
+        - "Host: sth01.teleport.xxxxx.com"
+        - "Origin: https://sth01.teleport.xxxxx.com"
 
-app_service:
-  enabled: true
-auth:
-  clusterName: teleport.xxxxxxxxx.com
-  publicAddr: teleport.xxxxxxxxx.com
-  additionalDNSEntries:
-    - teleport-cluster.teleport-cluster.svc.cluster.local
-# proxy:
-#   public_addr: 
-#     - "teleport.xxxxxxxxx.com:443"
-#     - "*.teleport.xxxxxxxxx.com:443"
-#   web_listen_addr: "0.0.0.0:3080"
+  - name: "longhorn"
+    description: "Longhorn Dashboard"
+    uri: "http://longhorn-frontend.longhorn-system.svc.cluster.local:80"
+    public_addr: "longhorn.teleport.xxxxx.com"
+    insecure_skip_verify: true
+    labels:
+      environment: server
+    rewrite:
+      headers:
+        - "Host: longhorn.teleport.xxxxx.com"
+        - "Origin: https://longhorn.teleport.xxxxx.com"
 
-# helm upgrade teleport-cluster teleport/teleport-cluster -n teleport-cluster -f values.yaml
-# helm upgrade teleport-agent teleport/teleport-kube-agent   --namespace teleport-cluster   -f agent-values.yaml
+  
