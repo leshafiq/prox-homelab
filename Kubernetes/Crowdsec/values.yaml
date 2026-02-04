@@ -1,4 +1,31 @@
 container_runtime: containerd
+
+# --- GLOBAL CONFIGURATION ---
+# This section creates the ConfigMaps for parsers and the LAPI server
+config:
+  parsers:
+    s02-enrich:
+      my-whitelist.yaml: |
+        name: shafiq/whitelist
+        description: "Whitelist internal IPs and Office"
+        whitelist:
+          reason: "exclude-trusted-traffic"
+          ip:
+            - "1.2.3.4"      # <--- REPLACE with your public IP
+  
+  config.yaml.local: |
+    api:
+      server:
+        auto_registration:
+          enabled: true
+          token: "${REGISTRATION_TOKEN}"
+          allowed_ranges:
+            - "127.0.0.1/32"
+            - "192.168.0.0/16"
+            - "10.0.0.0/8"
+            - "172.16.0.0/12"
+
+# --- AGENT (The log processor) ---
 agent:
   acquisition:
     - namespace: traefik
@@ -7,35 +34,26 @@ agent:
   env:
     - name: COLLECTIONS
       value: "crowdsecurity/traefik"
+
+# --- LAPI (The decision engine) ---
 lapi:
   env:
-  - name: ENROLL_KEY
-    valueFrom:
-      secretKeyRef:
-        name: crowdsec-secrets
-        key: key
-  - name: ENROLL_INSTANCE_NAME
-    value: name
-  - name: ENROLL_TAGS
-    value: tags
-  - name: BOUNCER_KEY_traefik
-    valueFrom:
-      secretKeyRef:
-        name: crowdsec-secrets
-        key: dbPassword
+    - name: ENROLL_KEY
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-secrets
+          key: key
+    - name: ENROLL_INSTANCE_NAME
+      value: shafiq-cluster
+    - name: ENROLL_TAGS
+      value: k3s
+    - name: BOUNCER_KEY_traefik
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-secrets
+          key: bouncer-key
 
-config:
-  config.yaml.local: |
-    api:
-      server:
-        auto_registration:
-          enabled: true
-          token: "${REGISTRATION_TOKEN}" # /!\ Do not modify this variable (auto-generated and handled by the chart)
-          allowed_ranges:
-            - "127.0.0.1/32"
-            - "192.168.0.0/16"
-            - "10.0.0.0/8"
-            - "172.16.0.0/12"
+# --- APPSEC (WAF capabilities) ---
 appsec:
   enabled: true
   acquisitions:
@@ -50,10 +68,14 @@ appsec:
   env:
     - name: COLLECTIONS
       value: "crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-crs crowdsecurity/appsec-generic-rules"
-lapi:
-  env:
-    - name: BOUNCER_KEY_traefik
-      valueFrom:
-        secretKeyRef:
-          name: crowdsec-secrets
-          key: dbPassword
+
+# --- Commands (CLI) ---
+
+# To test your whitelist parser, you can exec into the agent pod and run:
+# kubectl exec -it -n crowdsec crowdsec-agent-6b7ld -- sh -c "echo '1.2.3.4 - - [04/Feb/2026:12:00:00 +0000] \"GET /admin HTTP/1.1\" 404 0 \"-\" \"-\" 1 \"-\" \"-\" 0ms' | cscli explain --type traefik -f -"
+
+# To test if crowdsec is working, you can run the following command to see the decisions made by crowdsec
+# cscli metrics
+# cscli decisions list
+# cscli decisions add --ip 192.168.xxx.xxx
+# cscli decisions delete --ip 192.168.xxx.xxx
