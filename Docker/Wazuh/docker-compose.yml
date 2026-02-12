@@ -19,7 +19,7 @@ services:
     environment:
       - INDEXER_URL=https://wazuh.indexer:9200
       - INDEXER_USERNAME=admin
-      - INDEXER_PASSWORD=SecretPassword
+      - INDEXER_PASSWORD=password
       - FILEBEAT_SSL_VERIFICATION_MODE=full
       - SSL_CERTIFICATE_AUTHORITIES=/etc/ssl/root-ca.pem
       - SSL_CERTIFICATE=/etc/ssl/filebeat.pem
@@ -78,7 +78,7 @@ services:
     restart: unless-stopped
     environment:
       - INDEXER_USERNAME=admin
-      - INDEXER_PASSWORD=SecretPassword
+      - INDEXER_PASSWORD=password
       - WAZUH_API_URL=https://wazuh.manager
       - DASHBOARD_USERNAME=kibanaserver
       - DASHBOARD_PASSWORD=kibanaserver
@@ -96,7 +96,7 @@ services:
       - wazuh.indexer
     labels:
       - traefik.enable=true
-      - traefik.http.routers.wazuh.rule=Host(`wazuh.shafiqtechub.com`)
+      - traefik.http.routers.wazuh.rule=Host(`wazuh.xxx.com`)
       - traefik.http.services.wazuh.loadbalancer.server.port=5601
       - traefik.http.routers.wazuh.service=wazuh
       - traefik.http.routers.wazuh.entrypoints=websecure
