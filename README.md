@@ -3,7 +3,7 @@ I’ve been building and refining my homelab as a system administrator. What sta
 🌐 Networking
 On the networking side, I’m using a MikroTik RB4011iGS+ as my primary DHCP server and firewall, handling VLAN segmentation and firewall rules. Switching is handled by Ubiquiti USW 24 PoE Pro and USW 48 PoE Pro switches, all managed via a self-hosted UniFi Controller.
 
-
+![Network Infra Design](Network-tech.png)
 
 🖥️ Hardware Setup
 2× Intel NUC servers - i5 11th Gen, 24GB RAM
