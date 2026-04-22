@@ -1,0 +1,27 @@
+- name: Secure Nodes but Allow K3s Traffic
+  hosts: all
+  become: true
+  tasks:
+    - name: Allow all traffic from my local network (Safe Zone)
+      community.general.ufw:
+        rule: allow
+        src: 10.10.10.0/24  # Adjust this to match your home IP range
+
+    - name: Allow Web Traffic from the World
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - 80
+        - 443
+
+    - name: Ensure SSH is still open
+      community.general.ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: Enable Firewall
+      community.general.ufw:
+        state: enabled
+        policy: deny # Block everything else by default
