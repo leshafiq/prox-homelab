@@ -1,0 +1,12 @@
+all:
+  hosts:
+    STH01:
+      ansible_host: 192.168.1.1
+    k3s-master-01:
+      ansible_host: 192.168.1.1
+      ansible_user: user
+    k3s-master-02:
+      ansible_host: 192.168.1.1
+      ansible_user: user
+  vars:
+    ansible_user: user
