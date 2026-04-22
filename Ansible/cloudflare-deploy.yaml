@@ -1,0 +1,24 @@
+---
+- name: Deploy Cloudflare Tunnel
+  hosts: all
+  become: true
+  vars_files:
+    - secrets.yml
+  
+  tasks:
+    - name: Install Python dependencies for Docker module
+      apt:
+        name: 
+          - python3-requests
+          - python3-docker
+        state: present
+        update_cache: yes
+
+    - name: Ensure cloudflared container is running
+      community.docker.docker_container:
+        name: cloudflared-tunnel
+        image: cloudflare/cloudflared:latest
+        state: started
+        restart_policy: always
+        pull: true
+        command: "tunnel --no-autoupdate run --token {{ cloudflare_token }}"
