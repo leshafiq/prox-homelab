@@ -9,9 +9,9 @@ curl -SL https://github.com/docker/compose/releases/download/v5.0.1/docker-compo
 
 Add user to docker group (to code without sudo)
 
-2. sudo usermod -aG docker $USER
+2. newgrp docker
 
-3. newgrp docker
+3. sudo usermod -aG docker $USER
 
 4.  Connect SMB using cifs-utils
     sudo apt update
