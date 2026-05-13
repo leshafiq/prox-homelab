@@ -1,0 +1,46 @@
+---
+services:
+  bitwarden:
+    image: ghcr.io/bitwarden/lite
+    container_name: bitwarden-lite
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .env
+    # ports:
+    #   - "8888:8080"
+    # expose:
+    #   - 8080
+    volumes:
+      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/bitwarden-lite/data:/etc/bitwarden
+      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/bitwarden-lite/data/logs:/var/log/bitwarden
+    networks:
+     - traefik
+    labels:
+     - traefik.enable=true
+     - traefik.http.routers.bitwarden.rule=Host(`bitwarden.xxx.com`)
+     - traefik.http.services.bitwarden.loadbalancer.server.port=8080
+     - traefik.http.routers.bitwarden.entrypoints=websecure
+     - traefik.http.routers.bitwarden.tls.certresolver=cloudflare
+     - traefik.http.routers.bitwarden.tls=true
+     - traefik.http.routers.bitwarden.service=bitwarden  
+  
+  db:
+    image: postgres:18-alpine
+    container_name: bitwarden-lite-db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: $BW_DB_USERNAME
+      POSTGRES_PASSWORD: $BW_DB_PASSWORD
+      POSTGRES_DB: $BW_DB_DATABASE
+    volumes:
+      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/bitwarden-lite/psql:/var/lib/postgresql
+    networks:
+     - traefik
+
+networks:
+ traefik:
+   external: true
