@@ -9,31 +9,68 @@
 ==================================================================================================================================================================
 Oracle
 
-1. Install Required Packages
-sudo dnf install nfs-utils -y
-sudo dnf install cryptsetup -y
-sudo dnf install device-mapper -y
+Step 1: Install Required Core Packages
+First, install the storage utilities Longhorn needs alongside the tools required to manage SELinux policies.
 
-2. Load Kernel Modules Manually
+Bash
+sudo dnf install -y nfs-utils cryptsetup device-mapper iscsi-initiator-utils policycoreutils-python-utils container-selinux
+Step 2: Install the K3s SELinux Policy Engine
+K3s provides a targeted SELinux RPM package that defines the specific security contexts for its processes. Install it directly from their repository:
+
+Bash
+sudo dnf install -y https://github.com/k3s-io/k3s-selinux/releases/latest/download/k3s-selinux-1.5-1.el8.noarch.rpm
+Step 3: Configure SELinux Storage & Container Booleans
+By default, SELinux prevents containers from managing host control groups (cgroups) and using raw block devices. You must explicitly toggle these rules to on permanently (-P).
+
+Bash
+# Allow containers to interact with host devices (crucial for iSCSI and raw disks)
+sudo setsebool -P container_use_devices 1
+
+# Allow containers to manage cgroups (required for Kubernetes resource isolation)
+sudo setsebool -P container_manage_cgroup 1
+Step 4: Configure and Persist Kernel Modules
+Longhorn relies on the host kernel to handle NFS mounts and cryptographic features for encrypted volumes. Load them now and configure them to persist across reboots.
+
+Bash
+# Load modules into the current session
 sudo modprobe nfs
 sudo modprobe dm_crypt
 
-3. Persist Kernel Modules Across Reboots
-sudo nano /etc/modules-load.d/k3s-modules.conf
-Paste the exact same lines into the file, then save and exit:
+# Persist them for future reboots
+sudo bash -c 'cat <<EOF > /etc/modules-load.d/k3s-modules.conf
 nfs
 dm_crypt
+EOF'
+Step 5: Enable Required System Services
+Longhorn utilizes the host's iSCSI daemon to map block storage. Ensure it is configured to run automatically.
 
-4. Enable and Start iSCSI Daemon
-Longhorn relies heavily on iSCSI for block storage. On Oracle Linux, you need to make sure the initiator utilities are installed and running.
-sudo dnf install iscsi-initiator-utils -y
+Bash
 sudo systemctl enable --now iscsid
-sudo systemctl status iscsid
+Step 6: Disable Conflicting Services
+The host's multipath daemon will try to claim Longhorn's virtual storage paths, causing severe stability and performance issues. Stop and completely disable it.
 
-5. Disable Multipathd
-Longhorn manages its own storage paths and can conflict with the system's default multipath daemon.
+Bash
 sudo systemctl stop multipathd multipathd.socket
 sudo systemctl disable multipathd multipathd.socket
+Step 7: Configure Firewall Rules for K3s & Longhorn
+Ensure your firewall allows cluster communication and handles the API server traffic cleanly.
+
+Bash
+# Open the Kubernetes API Server port
+sudo firewall-cmd --add-port=6443/tcp --permanent
+
+# Trust your internal Pod and Service network subnets
+sudo firewall-cmd --add-source=10.42.0.0/16 --permanent
+sudo firewall-cmd --add-source=10.43.0.0/16 --permanent
+
+# Reload the firewall engine to apply changes safely
+sudo firewall-cmd --reload
+Verification Checklist
+Once you complete these steps and deploy Longhorn, run this quick check to confirm SELinux is handling everything smoothly:
+
+Bash
+# Check if any denials are actively happening
+sudo ausearch -m AVC -ts recent
 
 ==================================================================================================================================================================
 Ubuntu
