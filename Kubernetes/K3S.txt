@@ -1,7 +1,29 @@
+
+===================================================================================================================================================================================
+Oracle
+
+# 1. Allow Kubernetes API server (Port 6443)
+sudo firewall-cmd --add-port=6443/tcp --permanent
+
+# 2. Allow all traffic from the Pod network (10.42.0.0/16)
+sudo firewall-cmd --add-source=10.42.0.0/16 --permanent
+
+# 3. Allow all traffic from the Service network (10.43.0.0/16)
+sudo firewall-cmd --add-source=10.43.0.0/16 --permanent
+
+# 4. Reload the firewall to apply the changes
+sudo firewall-cmd --reload
+
+===================================================================================================================================================================================
+
+Ubuntu
+
 1.  If you wish to keep ufw enabled, by default, the following rules are required:
-    sudo ufw allow 6443/tcp #apiserver
-    sudo ufw allow from 10.42.0.0/16 to any #pods
-    sudo ufw allow from 10.43.0.0/16 to any #services
+sudo ufw allow 6443/tcp #apiserver
+sudo ufw allow from 10.42.0.0/16 to any #pods
+sudo ufw allow from 10.43.0.0/16 to any #services
+
+===================================================================================================================================================================================
 
 2. To get started, first launch a server node with the cluster-init flag to enable clustering and a token that will be used as a shared secret to join additional servers to the cluster
     curl -sfL https://get.k3s.io | K3S_TOKEN=SECRET sh -s - server \
