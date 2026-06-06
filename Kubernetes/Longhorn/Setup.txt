@@ -6,6 +6,38 @@
 2.  add another pod for coredns
     kubectl scale deployment coredns -n kube-system --replicas=2
 
+==================================================================================================================================================================
+Oracle
+
+1. Install Required Packages
+sudo dnf install nfs-utils -y
+sudo dnf install cryptsetup -y
+sudo dnf install device-mapper -y
+
+2. Load Kernel Modules Manually
+sudo modprobe nfs
+sudo modprobe dm_crypt
+
+3. Persist Kernel Modules Across Reboots
+sudo nano /etc/modules-load.d/k3s-modules.conf
+Paste the exact same lines into the file, then save and exit:
+nfs
+dm_crypt
+
+4. Enable and Start iSCSI Daemon
+Longhorn relies heavily on iSCSI for block storage. On Oracle Linux, you need to make sure the initiator utilities are installed and running.
+sudo dnf install iscsi-initiator-utils -y
+sudo systemctl enable --now iscsid
+sudo systemctl status iscsid
+
+5. Disable Multipathd
+Longhorn manages its own storage paths and can conflict with the system's default multipath daemon.
+sudo systemctl stop multipathd multipathd.socket
+sudo systemctl disable multipathd multipathd.socket
+
+==================================================================================================================================================================
+Ubuntu
+
 3.  sudo apt install nfs-common -y
 
 4.  sudo apt install cryptsetup -y
@@ -27,6 +59,8 @@
 11. sudo systemctl stop multipathd multipathd.socket
 
 12. sudo systemctl disable multipathd multipathd.socket
+
+==================================================================================================================================================================
 
 13. helm repo add longhorn https://charts.longhorn.io
 
