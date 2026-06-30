@@ -24,7 +24,7 @@ entryPoints:
     http:
       middlewares:
         - crowdsec-bouncer@file
-        - hsts@file
+        - hsts-headers@file
       redirections:
          entryPoint:
            to: websecure
@@ -59,7 +59,7 @@ entryPoints:
     http:
       middlewares:
         - crowdsec-bouncer@file
-        - hsts@file
+        - hsts-headers@file
     forwardedHeaders:
       trustedIPs: *trustedIps       
 
