@@ -8,7 +8,7 @@ services:
       - ./public:/usr/share/nginx/html
     labels:
       - traefik.enable=true
-      - traefik.http.routers.goaccess.rule=Host(`goaccess.ora.shafiqtechub.com`)
+      - traefik.http.routers.goaccess.rule=Host(`goaccess.example.com`)
       - traefik.http.routers.goaccess.entrypoints=websecure
       - traefik.http.routers.goaccess.tls.certresolver=cloudflare
       - traefik.http.routers.goaccess.tls=true
