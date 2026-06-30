@@ -1,0 +1,44 @@
+services:
+  web:
+    image: nginx
+    volumes:
+      - ./logs:/var/log/nginx
+      - ./configs/nginx.conf:/etc/nginx/nginx.conf
+      - ./configs/goaccess.nginx.conf:/etc/nginx/conf.d/goaccess.conf
+      - ./public:/usr/share/nginx/html
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.goaccess.rule=Host(`goaccess.ora.shafiqtechub.com`)
+      - traefik.http.routers.goaccess.entrypoints=websecure
+      - traefik.http.routers.goaccess.tls.certresolver=cloudflare
+      - traefik.http.routers.goaccess.tls=true
+      - traefik.http.routers.goaccess.service=goaccess
+      - traefik.http.services.goaccess.loadbalancer.server.port=80
+    networks:
+      - traefik
+
+  goaccess:
+    image: allinurl/goaccess
+    container_name: goaccess
+    volumes:
+      - ./configs/goaccess.traefik.conf:/srv/config/goaccess.conf
+      - ./logs:/srv/logs
+      - ./public:/srv/report
+      # === Traefik access logs ===
+      # Option A: Use with CrowdSec (shared Docker volume)
+      - traefik_traefik-logs:/srv/traefik-logs:ro
+      # Option B: Use WITHOUT CrowdSec (bind mount) — comment Option A, uncomment below
+      # - /home/shafiq/Git/traefik/logs:/srv/traefik-logs:ro
+    command: ["--no-global-config", "--config-file=/srv/config/goaccess.conf"]
+    restart: unless-stopped
+    networks:
+      - traefik
+
+# === If using Option B (bind mount), comment out the entire block below: ===
+volumes:
+  traefik_traefik-logs:
+    external: true
+
+networks:
+  traefik:
+    external: true
