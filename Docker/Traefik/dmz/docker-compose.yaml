@@ -1,0 +1,35 @@
+services:
+  traefik:
+    image: docker.io/library/traefik:v3.7.5
+    container_name: traefik
+    ports:
+      - 443:443
+    volumes:
+      - /run/docker.sock:/run/docker.sock:ro
+      - ./config/:/etc/traefik/:ro
+      - ./certs/:/var/traefik/certs/:rw
+      # Use named volume if CrowdSec needs access to Traefik logs
+      # - traefik-logs:/var/log/traefik
+      # Use bind mount if NOT using CrowdSec (comment the line above, uncomment below)
+      - ./logs:/var/log/traefik:rw
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
+      - traefik.http.routers.traefik.service=traefik
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.rule=Host(`traefik-dmz.example.com`)
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.tls.certresolver=cloudflare
+      # - traefik.http.routers.traefik.middlewares=crowdsec-bouncer@file
+      # - traefik.http.routers.traefik.middlewares=hsts-headers@file
+#     - traefik.http.routers.traefik.middlewares=authentik-middleware@file
+    environment:
+      - CF_DNS_API_TOKEN=$CF_DNS_API_TOKEN
+    restart: unless-stopped
+    networks:
+      - traefik
+# volumes:
+#   traefik-logs:
+networks:
+  traefik:
+    name: traefik

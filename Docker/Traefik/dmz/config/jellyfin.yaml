@@ -1,0 +1,45 @@
+# =============================================================================
+# Jellyfin Router & Backend Service
+# =============================================================================
+# To switch between HTTP and HTTPS backend proxying, comment/uncomment the
+# relevant blocks below. Both options require the corresponding serversTransport
+# to be active.
+# =============================================================================
+
+http:
+  # ---------------------------------------------------------------------------
+  # serversTransports
+  #   HTTPS mode : requires "internal-transport" (sets SNI to match cert)
+  #   HTTP  mode : uses the default transport (no special config needed)
+  # ---------------------------------------------------------------------------
+  serversTransports:
+    internal-transport:
+      serverName: "jellyfin.example.com"
+      insecureSkipVerify: true
+
+  routers:
+    jellyfin:
+      rule: "Host(`jellyfin.example.com`)"
+      entryPoints:
+        - websecure
+      service: jellyfin-backend
+      tls:
+        certResolver: cloudflare 
+
+  services:
+    jellyfin-backend:
+      loadBalancer:
+        # -----------------------------------------------------------------------
+        # HTTPS MODE (TLS between DMZ ↔ Internal, SNI = jellyfin.example.com)
+        # Uncomment the line below and comment the HTTP block
+        # -----------------------------------------------------------------------
+        serversTransport: internal-transport
+        servers:
+          - url: "https://10.10.10.10:443"
+
+        # -----------------------------------------------------------------------
+        # HTTP MODE (plain-text between DMZ ↔ Internal, no TLS overhead)
+        # Uncomment the block below and comment the HTTPS block above
+        # -----------------------------------------------------------------------
+        # servers:
+        #   - url: "http://10.10.10.10:80"

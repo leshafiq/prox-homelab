@@ -1,0 +1,105 @@
+# =================================================================
+# PUBLIC TRAEFIK STATIC CONFIGURATION (DMZ NODE)
+# File Location: /etc/traefik/traefik.yaml
+# =================================================================
+
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+log:
+  level: "INFO"
+  filePath: "/var/log/traefik/traefik.log"
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  fields:
+    headers:
+      defaultMode: keep
+
+api:
+  dashboard: true
+  insecure: true
+
+experimental:
+  plugins:
+    cloudflarewarp:
+      moduleName: "github.com/BetterCorp/cloudflarewarp"
+      version: "v1.3.3"
+
+# -----------------------------------------------------------------
+# EntryPoints Definition
+# -----------------------------------------------------------------
+entryPoints:
+  web:
+    address: :80
+    http:
+      # Automatically upgrades cleartext HTTP to HTTPS at the public edge
+      redirections:
+         entryPoint:
+           to: websecure
+           scheme: https
+    forwardedHeaders:
+      trustedIPs: &trustedIps
+        # Cloudflare Public IPv4 Ranges
+        - 103.21.244.0/22
+        - 103.22.200.0/22
+        - 103.31.4.0/22
+        - 104.16.0.0/13
+        - 104.24.0.0/14
+        - 108.162.192.0/18
+        - 131.0.72.0/22
+        - 141.101.64.0/18
+        - 162.158.0.0/15
+        - 172.64.0.0/13
+        - 173.245.48.0/20
+        - 188.114.96.0/20
+        - 190.93.240.0/20
+        - 197.234.240.0/22
+        - 198.41.128.0/17
+        # Cloudflare Public IPv6 Ranges
+        - 2400:cb00::/32
+        - 2606:4700::/32
+        - 2803:f800::/32
+        - 2405:b500::/32
+        - 2405:8100::/32
+        - 2a06:98c0::/29
+        - 2c0f:f248::/32
+        # Local & Docker Infrastructure Sandbox
+        - 172.19.0.1/32  # Docker Gateway IP
+        - 172.19.0.9/32  # Traefik Container IP
+        - 192.168.1.1/32  # Gateway IP
+
+  websecure:
+    address: :443
+    forwardedHeaders:
+      trustedIPs: *trustedIps      
+
+# -----------------------------------------------------------------
+# TLS & Certificate Automation
+# -----------------------------------------------------------------
+certificatesResolvers:
+  cloudflare:
+    acme:
+      email: example@gmail.com
+      storage: /var/traefik/certs/cloudflare-acme.json
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
+
+# Required if you switch back to port 443 proxy-to-proxy chaining later
+serversTransport:
+  insecureSkipVerify: true
+
+# -----------------------------------------------------------------
+# Infrastructure Providers
+# -----------------------------------------------------------------
+providers:
+  docker:
+    exposedByDefault: false
+  file:
+    directory: /etc/traefik
+    watch: true
