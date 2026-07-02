@@ -1,0 +1,7 @@
+http:
+  routers:
+    jellyfin-web:
+      rule: "Host(`jellyfin.example.com`)"
+      entryPoints:
+        - websecure
+      service: jellyfin@docker
