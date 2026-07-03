@@ -34,6 +34,9 @@ entryPoints:
   web:
     address: :80
     http:
+      middlewares:
+       - crowdsec-bouncer@file
+       - hsts-headers@file
       # Automatically upgrades cleartext HTTP to HTTPS at the public edge
       redirections:
          entryPoint:
@@ -72,6 +75,10 @@ entryPoints:
 
   websecure:
     address: :443
+    http:
+      middlewares:
+       - crowdsec-bouncer@file
+       - hsts-headers@file
     forwardedHeaders:
       trustedIPs: *trustedIps      
 
