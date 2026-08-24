@@ -10,7 +10,7 @@ How to create Cloud Init (Ubuntu)
     qm disk import 5000 noble-server-cloudimg-amd64.img local-lvm
 
 4.  Attach the new disk to the vm as a scsi drive on the scsi controller (Change local to the storage of your choice)
-    qm set 5000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-8000-disk-0
+    qm set 5000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-5000-disk-0
 
 5.  Add cloud init drive (Change local to the storage of your choice)
     qm set 5000 --ide2 local-lvm:cloudinit
