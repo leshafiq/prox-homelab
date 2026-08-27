@@ -69,9 +69,9 @@ resource "proxmox_vm_qemu" "docker-01" {
   }
 }
 
-resource "proxmox_vm_qemu" "vk-docker-02" {
+resource "proxmox_vm_qemu" "docker-02" {
 
-  name        = "vk-docker-02"
+  name        = "docker-02"
   target_node = "pve-01"
   vmid        = "202"
 
