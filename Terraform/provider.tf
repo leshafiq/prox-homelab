@@ -22,7 +22,7 @@ variable "PROXMOX_TOKEN" {
 }
 
 variable "PUBLIC_SSH_KEY" {
-  type      = string
+  type      = list(string)
   sensitive = true
 }
 
@@ -32,7 +32,7 @@ variable "CLOUD_PASS" {
 }
 
 provider "proxmox" {
-  pm_api_url          = var.PROXMOX_URL
+  pm_api_url          = "${var.PROXMOX_URL}/api2/json"
   pm_api_token_id     = var.PROXMOX_USER
   pm_api_token_secret = var.PROXMOX_TOKEN
   pm_tls_insecure     = true
